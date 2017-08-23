@@ -29,10 +29,9 @@ import br.com.uol.pagseguro.api.PagSeguro;
  */
 public interface XMLUnmarshallListener {
 
-  /**
-   * Callback always called after unmarshal serves to when you need to keep within
-   * XML a reference to the PagSeguro APIs.
-   */
-  void onUnmarshal(PagSeguro pagseguroAPI, String rawData);
-
+    /**
+     * Callback always called after unmarshal serves to when you need to keep within
+     * XML a reference to the PagSeguro APIs.
+     */
+    void onUnmarshal(PagSeguro pagseguroAPI, String rawData);
 }

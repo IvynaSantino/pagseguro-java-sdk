@@ -20,6 +20,8 @@
  */
 package br.com.uol.pagseguro.api.http;
 
+import br.com.uol.pagseguro.api.utils.Loggable;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -28,7 +30,7 @@ import java.util.Map;
  *
  * @author PagSeguro Internet Ltda.
  */
-public interface HttpClient {
+public interface HttpClient extends Loggable {
 
   /**
    * Execute the requests
@@ -39,7 +41,5 @@ public interface HttpClient {
    * @param body      Body
    * @return Http response
    */
-  HttpResponse execute(HttpMethod method, String targetURL, Map<String, String> headers, HttpRequestBody body)
-      throws IOException;
-
+  HttpResponse execute(HttpMethod method, String targetURL, Map<String, String> headers, HttpRequestBody body) throws IOException;
 }

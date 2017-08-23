@@ -21,9 +21,6 @@
 
 package br.com.uol.pagseguro.api.preapproval.search;
 
-import java.io.IOException;
-import java.util.Map;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.DataList;
@@ -35,8 +32,9 @@ import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.PagSeguroCommand;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Search pre approval by interval
@@ -45,58 +43,53 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  * @see PreApprovalSummary
  * @see PagSeguroCommand
  */
-class PreApprovalSearchByInterval implements
-    PagSeguroCommand<DataList<? extends PreApprovalSummary>> {
+class PreApprovalSearchByInterval implements PagSeguroCommand<DataList<? extends PreApprovalSummary>> {
+    private final Integer interval;
 
-  private static final Log LOGGER =
-      LoggerFactory.getLogger(PreApprovalSearchByInterval.class.getName());
-
-  private final Integer interval;
-
-  /**
-   * Constructor
-   *
-   * @param interval Interval in days
-   */
-  PreApprovalSearchByInterval(Integer interval) {
-    this.interval = interval;
-  }
-
-  /**
-   * Execute search by interval
-   *
-   * @param pagseguro  Pagseguro
-   * @param httpClient Http Client
-   * @return Pre Approval list
-   * @see PreApprovalSummary
-   * @see DataList
-   * @see PagSeguro
-   * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
-   */
-  @Override
-  public DataList<? extends PreApprovalSummary> execute(PagSeguro pagseguro,
-                                                        HttpClient httpClient) {
-    LOGGER.info("Iniciando busca assinatura por intervalo de data de notificoes");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = new RequestMap();
-    map.putInteger("interval", interval);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.GET,
-          String.format(Endpoints.PRE_APPROVAL_SEARCH_BY_INTERVAL, pagseguro.getHost(),
-              map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar busca assinatura por intervalo de data");
-      throw new PagSeguroLibException(e);
+    /**
+     * Constructor
+     *
+     * @param interval Interval in days
+     */
+    PreApprovalSearchByInterval(Integer interval) {
+        this.interval = interval;
     }
-    LOGGER.info("Parseando XML de resposta");
-    DataList<? extends PreApprovalSummary> preApprovalsSummary = response.parseXMLContent(pagseguro,
-        PreApprovalSearchResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Busca assinatura por intervalo de data finalizada");
-    return preApprovalsSummary;
-  }
+
+    /**
+     * Execute search by interval
+     *
+     * @param pagseguro  Pagseguro
+     * @param httpClient Http Client
+     * @return Pre Approval list
+     * @see PreApprovalSummary
+     * @see DataList
+     * @see PagSeguro
+     * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
+     */
+    @Override
+    public DataList<? extends PreApprovalSummary> execute(PagSeguro pagseguro,
+                                                          HttpClient httpClient) {
+        getLogger().info("Iniciando busca assinatura por intervalo de data de notificoes");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = new RequestMap();
+        map.putInteger("interval", interval);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.GET,
+                    String.format(Endpoints.PRE_APPROVAL_SEARCH_BY_INTERVAL, pagseguro.getHost(),
+                            map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar busca assinatura por intervalo de data");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        DataList<? extends PreApprovalSummary> preApprovalsSummary = response.parseXMLContent(pagseguro,
+                PreApprovalSearchResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Busca assinatura por intervalo de data finalizada");
+        return preApprovalsSummary;
+    }
 }

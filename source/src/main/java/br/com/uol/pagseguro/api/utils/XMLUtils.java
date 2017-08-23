@@ -20,14 +20,13 @@
  */
 package br.com.uol.pagseguro.api.utils;
 
-import java.io.StringReader;
+import br.com.uol.pagseguro.api.PagSeguro;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.Unmarshaller.Listener;
-
-import br.com.uol.pagseguro.api.PagSeguro;
+import java.io.StringReader;
 
 /**
  * Utils to parse xml
@@ -36,49 +35,30 @@ import br.com.uol.pagseguro.api.PagSeguro;
  */
 public class XMLUtils {
 
-  /**
-   * Unmarshal xml
-   *
-   * @param pagSeguro Pagseguro instance
-   * @param clazz     Class to be parsed
-   * @param rawXml    Raw xml
-   * @param <T>       Object to be returned
-   * @return Object parsed
-   */
-  public static <T> T unmarshal(PagSeguro pagSeguro, Class<T> clazz, String rawXml) throws JAXBException {
-    final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
-    final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-    unmarshaller.setListener(new JaxBUnmarshalListener(pagSeguro, rawXml));
-    return (T) unmarshaller.unmarshal(new StringReader(rawXml));
-  }
-
-  /**
-   * Listener
-   */
-  private static class JaxBUnmarshalListener extends Listener {
-
-    private final PagSeguro pagSeguro;
-
-    private final String rawData;
-
-    public JaxBUnmarshalListener(PagSeguro pagSeguro, String rawData) {
-      this.pagSeguro = pagSeguro;
-      this.rawData = rawData;
+    public static <T> T unmarshal(PagSeguro pagSeguro, Class<T> clazz, String rawXml) throws JAXBException {
+        final JAXBContext jaxbContext = JAXBContext.newInstance(clazz);
+        final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setListener(new JaxBUnmarshalListener(pagSeguro, rawXml));
+        try (StringReader reader = new StringReader(rawXml)) {
+            return (T) unmarshaller.unmarshal(reader);
+        }
     }
 
-    /**
-     * After unmarshal
-     *
-     * @param target Target
-     * @param parent parent
-     */
-    @Override
-    public void afterUnmarshal(Object target, Object parent) {
-      super.afterUnmarshal(target, parent);
-      if (target instanceof XMLUnmarshallListener) {
-        ((XMLUnmarshallListener) target).onUnmarshal(pagSeguro, rawData);
-      }
-    }
+    private static class JaxBUnmarshalListener extends Listener {
+        private final PagSeguro pagSeguro;
+        private final String rawData;
 
-  }
+        JaxBUnmarshalListener(PagSeguro pagSeguro, String rawData) {
+            this.pagSeguro = pagSeguro;
+            this.rawData = rawData;
+        }
+
+        @Override
+        public void afterUnmarshal(Object target, Object parent) {
+            super.afterUnmarshal(target, parent);
+            if (target instanceof XMLUnmarshallListener) {
+                ((XMLUnmarshallListener) target).onUnmarshal(pagSeguro, rawData);
+            }
+        }
+    }
 }

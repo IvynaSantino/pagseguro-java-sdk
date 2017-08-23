@@ -22,19 +22,20 @@
 package br.com.uol.pagseguro.api.environment;
 
 import br.com.uol.pagseguro.api.PagSeguroEnv;
+import br.com.uol.pagseguro.api.utils.Loggable;
 
 /**
  * Interface responsible for providing configurations environment
  *
  * @author PagSeguro Internet Ltda.
  */
-public interface EnvironmentProvider {
+public interface EnvironmentProvider extends Loggable {
 
-  /**
-   * Get configurations environment
-   *
-   * @return Configurations environment
-   * @see PagSeguroEnv
-   */
-  PagSeguroEnv getEnvironment() throws Exception;
+    /**
+     * Get configurations environment
+     *
+     * @return Configurations environment
+     * @see PagSeguroEnv
+     */
+    PagSeguroEnv getEnvironment() throws Exception;
 }

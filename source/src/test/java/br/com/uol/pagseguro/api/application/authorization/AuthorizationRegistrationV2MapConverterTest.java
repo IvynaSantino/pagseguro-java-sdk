@@ -1,46 +1,45 @@
 package br.com.uol.pagseguro.api.application.authorization;
 
+import br.com.uol.pagseguro.api.utils.RequestMap;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
 
-import br.com.uol.pagseguro.api.utils.RequestMap;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author PagSeguro Internet Ltda.
  */
 public class AuthorizationRegistrationV2MapConverterTest {
 
-  private AuthorizationRegistrationV2MapConverter mapConverter;
+    private AuthorizationRegistrationV2MapConverter mapConverter;
 
-  private AuthorizationRegistration authorizationRegistration;
+    private AuthorizationRegistration authorizationRegistration;
 
-  @Before
-  public void setUp() throws Exception {
-    mapConverter = new AuthorizationRegistrationV2MapConverter();
+    @Before
+    public void setUp() throws Exception {
+        mapConverter = new AuthorizationRegistrationV2MapConverter();
 
-    authorizationRegistration = new AuthorizationRegistrationBuilder()
-        .withReference("reference")
-        .withNotificationUrl("notificationUrl")
-        .withRedirectURL("redirectUrl")
-        .build();
-  }
+        authorizationRegistration = new AuthorizationRegistrationBuilder()
+                .withReference("reference")
+                .withNotificationUrl("notificationUrl")
+                .withRedirectURL("redirectUrl")
+                .build();
+    }
 
-  @Test
-  public void shouldConvert() throws Exception {
-    RequestMap expectedMap = new RequestMap();
-    expectedMap.putMap(new HashMap<String, String>() {{
-      put("reference", "reference");
-      put("notificationURL", "notificationUrl");
-      put("redirectURL", "redirectUrl");
-    }});
+    @Test
+    public void shouldConvert() throws Exception {
+        RequestMap expectedMap = new RequestMap();
+        expectedMap.putMap(new HashMap<String, String>() {{
+            put("reference", "reference");
+            put("notificationURL", "notificationUrl");
+            put("redirectURL", "redirectUrl");
+        }});
 
-    RequestMap map = mapConverter.convert(authorizationRegistration);
+        RequestMap map = mapConverter.convert(authorizationRegistration);
 
-    assertEquals(expectedMap, map);
-  }
+        assertEquals(expectedMap, map);
+    }
 
 }

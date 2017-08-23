@@ -21,9 +21,6 @@
 
 package br.com.uol.pagseguro.api.preapproval.search;
 
-import java.io.IOException;
-import java.util.Map;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
@@ -32,8 +29,9 @@ import br.com.uol.pagseguro.api.http.HttpMethod;
 import br.com.uol.pagseguro.api.http.HttpRequestBody;
 import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.PagSeguroCommand;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Search pre approval by notification code
@@ -44,48 +42,45 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  */
 class PreApprovalSearchByNotification implements PagSeguroCommand<PreApprovalDetail> {
 
-  private static final Log LOGGER =
-      LoggerFactory.getLogger(PreApprovalSearchByNotification.class.getName());
+    private final String code;
 
-  private final String code;
-
-  /**
-   * Constructor
-   *
-   * @param code Notification code
-   */
-  PreApprovalSearchByNotification(String code) {
-    this.code = code;
-  }
-
-  /**
-   * Execute search by notification code
-   *
-   * @param pagseguro  Pagseguro
-   * @param httpClient Http Client
-   * @return Pre Approval Detail Response
-   * @see PreApprovalDetail
-   * @see PagSeguro
-   * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
-   */
-  @Override
-  public PreApprovalDetail execute(PagSeguro pagseguro, HttpClient httpClient) {
-    LOGGER.info("Iniciando busca assinatura por codigo de notificacao");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: notificationCode:%s", code));
-      response = httpClient.execute(HttpMethod.GET,
-          String.format(Endpoints.PRE_APPROVAL_SEARCH_BY_NOTIFICATION, pagseguro.getHost(), code),
-          null, null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar busca assinatura por codigo de notificacao");
-      throw new PagSeguroLibException(e);
+    /**
+     * Constructor
+     *
+     * @param code Notification code
+     */
+    PreApprovalSearchByNotification(String code) {
+        this.code = code;
     }
-    LOGGER.info("Parseando XML de resposta");
-    PreApprovalDetail preApproval = response.parseXMLContent(pagseguro, PreApprovalDetailXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Busca assinatura por codigo de notificacao finalizada");
-    return preApproval;
-  }
+
+    /**
+     * Execute search by notification code
+     *
+     * @param pagseguro  Pagseguro
+     * @param httpClient Http Client
+     * @return Pre Approval Detail Response
+     * @see PreApprovalDetail
+     * @see PagSeguro
+     * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
+     */
+    @Override
+    public PreApprovalDetail execute(PagSeguro pagseguro, HttpClient httpClient) {
+        getLogger().info("Iniciando busca assinatura por codigo de notificacao");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: notificationCode:%s", code));
+            response = httpClient.execute(HttpMethod.GET,
+                    String.format(Endpoints.PRE_APPROVAL_SEARCH_BY_NOTIFICATION, pagseguro.getHost(), code),
+                    null, null);
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar busca assinatura por codigo de notificacao");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        PreApprovalDetail preApproval = response.parseXMLContent(pagseguro, PreApprovalDetailXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Busca assinatura por codigo de notificacao finalizada");
+        return preApproval;
+    }
 }

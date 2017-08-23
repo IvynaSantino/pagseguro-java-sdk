@@ -22,8 +22,6 @@
 package br.com.uol.pagseguro.api.environment;
 
 import br.com.uol.pagseguro.api.PagSeguroEnv;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
 
 /**
  * Class responsible for providing the environment configurations of jvm
@@ -32,27 +30,16 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  */
 public class JVMEnvVariableEnvironmentProvider implements EnvironmentProvider {
 
-  private static final Log LOGGER =
-      LoggerFactory.getLogger(JVMEnvVariableEnvironmentProvider.class);
-
-  JVMEnvVariableEnvironmentProvider() {
-  }
-
-  /**
-   * Get configurations environment
-   *
-   * @return Configurations environment
-   */
-  @Override
-  public PagSeguroEnv getEnvironment() throws Exception {
-    LOGGER.info("Lendo configuracoes de ambiente");
-    final PagSeguroEnv environment;
-    if (System.getProperty("pagseguro.environment") != null) {
-      environment = PagSeguroEnv.fromName(System.getProperty("pagseguro.environment"));
-    } else {
-      throw new IllegalArgumentException("Environment property not found");
+    @Override
+    public PagSeguroEnv getEnvironment() throws Exception {
+        getLogger().info("Lendo configuracoes de ambiente");
+        final PagSeguroEnv environment;
+        if (System.getProperty("pagseguro.environment") != null) {
+            environment = PagSeguroEnv.fromName(System.getProperty("pagseguro.environment"));
+        } else {
+            throw new IllegalArgumentException("Environment property not found");
+        }
+        getLogger().info("Configuracoes de ambiente lidas");
+        return environment;
     }
-    LOGGER.info("Configuracoes de ambiente lidas");
-    return environment;
-  }
 }

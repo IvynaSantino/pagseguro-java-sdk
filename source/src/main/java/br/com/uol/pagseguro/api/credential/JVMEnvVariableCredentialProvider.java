@@ -20,9 +20,6 @@
  */
 package br.com.uol.pagseguro.api.credential;
 
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
-
 /**
  * This class is responsible for retrieving the credentials through the jvm environments variable.
  *
@@ -30,32 +27,23 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  */
 public class JVMEnvVariableCredentialProvider implements CredentialProvider {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(JVMEnvVariableCredentialProvider.class);
-
-  JVMEnvVariableCredentialProvider() {
-  }
-
-  /**
-   * Retrieve the credentials through the jvm environments variable.
-   *
-   * @return Credential
-   */
-  @Override
-  public Credential getCredential() {
-    LOGGER.info("Lendo credenciais");
-    final Credential credential;
-    if (System.getProperty("pagseguro.email") != null
-        && System.getProperty("pagseguro.token") != null) {
-      credential = Credential.sellerCredential(System.getProperty("pagseguro.email").trim(),
-          System.getProperty("pagseguro.token").trim());
-    } else if (System.getProperty("pagseguro.appId") != null
-        && System.getProperty("pagseguro.appKey") != null) {
-      credential = Credential.applicationCredential(System.getProperty("pagseguro.appId").trim(),
-          System.getProperty("pagseguro.appKey").trim());
-    } else {
-      throw new IllegalArgumentException("Seller credential and Application credential not found");
+    /**
+     * Retrieve the credentials through the jvm environments variable.
+     *
+     * @return Credential
+     */
+    @Override
+    public Credential getCredential() {
+        getLogger().info("Lendo credenciais");
+        final Credential credential;
+        if (System.getProperty("pagseguro.email") != null && System.getProperty("pagseguro.token") != null) {
+            credential = Credential.sellerCredential(System.getProperty("pagseguro.email").trim(), System.getProperty("pagseguro.token").trim());
+        } else if (System.getProperty("pagseguro.appId") != null && System.getProperty("pagseguro.appKey") != null) {
+            credential = Credential.applicationCredential(System.getProperty("pagseguro.appId").trim(), System.getProperty("pagseguro.appKey").trim());
+        } else {
+            throw new IllegalArgumentException("Seller credential and Application credential not found");
+        }
+        getLogger().info("Credenciais lidas");
+        return credential;
     }
-    LOGGER.info("Credenciais lidas");
-    return credential;
-  }
 }

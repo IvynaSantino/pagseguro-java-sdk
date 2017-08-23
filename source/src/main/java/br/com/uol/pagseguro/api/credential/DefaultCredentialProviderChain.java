@@ -21,12 +21,11 @@
 
 package br.com.uol.pagseguro.api.credential;
 
+import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
 
 import static br.com.uol.pagseguro.api.environment.PagSeguroGlobalConfig.SYSTEM_PROPERTIES_FILE;
 
@@ -35,45 +34,43 @@ import static br.com.uol.pagseguro.api.environment.PagSeguroGlobalConfig.SYSTEM_
  *
  * @author PagSeguro Internet Ltda.
  */
-public class DefaultCredentialProviderChain {
+public class DefaultCredentialProviderChain implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(DefaultCredentialProviderChain.class);
+    private final List<CredentialProvider> credentialProviders = new LinkedList<CredentialProvider>();
 
-  private final List<CredentialProvider> credentialProviders = new LinkedList<CredentialProvider>();
-
-  /**
-   * Constructor
-   *
-   * Used to add credentials provider
-   *
-   * @see JVMEnvVariableCredentialProvider
-   * @see SystemPropCredentialProvider
-   * @see SystemEnvVariableCredentialProvider
-   */
-  public DefaultCredentialProviderChain() {
-    credentialProviders.add(new JVMEnvVariableCredentialProvider());
-    credentialProviders.add(new SystemPropCredentialProvider(SYSTEM_PROPERTIES_FILE));
-    credentialProviders.add(new SystemEnvVariableCredentialProvider());
-  }
-
-  /**
-   * The credentials can be obtained from the following, in order of priority:
-   * jvm variables,
-   * system .properties variables
-   * and system environment
-   *
-   * @return Credential
-   * @see Credential
-   */
-  public Credential getCredential() {
-    LOGGER.info("Iniciando leitura das credenciais");
-    for (CredentialProvider credentialProvider : credentialProviders) {
-      try {
-        return credentialProvider.getCredential();
-      } catch (Exception e) {
-      }
+    /**
+     * Constructor
+     * <p>
+     * Used to add credentials provider
+     *
+     * @see JVMEnvVariableCredentialProvider
+     * @see SystemPropCredentialProvider
+     * @see SystemEnvVariableCredentialProvider
+     */
+    public DefaultCredentialProviderChain() {
+        credentialProviders.add(new JVMEnvVariableCredentialProvider());
+        credentialProviders.add(new SystemPropCredentialProvider(SYSTEM_PROPERTIES_FILE));
+        credentialProviders.add(new SystemEnvVariableCredentialProvider());
     }
-    throw new PagSeguroLibException(new RuntimeException("Can not create Credentials " +
-        "from providers"));
-  }
+
+    /**
+     * The credentials can be obtained from the following, in order of priority:
+     * jvm variables,
+     * system .properties variables
+     * and system environment
+     *
+     * @return Credential
+     * @see Credential
+     */
+    public Credential getCredential() {
+        getLogger().info("Iniciando leitura das credenciais");
+        for (CredentialProvider credentialProvider : credentialProviders) {
+            try {
+                return credentialProvider.getCredential();
+            } catch (Exception e) {
+                getLogger().error("Erro ao ler credenciais", e);
+            }
+        }
+        throw new PagSeguroLibException(new RuntimeException("Can not create Credentials from providers"));
+    }
 }

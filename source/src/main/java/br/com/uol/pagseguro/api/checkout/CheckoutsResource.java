@@ -20,8 +20,6 @@
  */
 package br.com.uol.pagseguro.api.checkout;
 
-import java.io.IOException;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
@@ -31,72 +29,67 @@ import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import java.io.IOException;
 
 /**
  * Factory to checkout registration
  *
  * @author PagSeguro Internet Ltda.
  */
-public class CheckoutsResource {
+public class CheckoutsResource implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(CheckoutsResource.class.getName());
+    private static final CheckoutRegistrationV2MapConverter CHECKOUT_REGISTRATION_MC = new CheckoutRegistrationV2MapConverter();
+    private final PagSeguro pagSeguro;
+    private final HttpClient httpClient;
 
-  private static final CheckoutRegistrationV2MapConverter CHECKOUT_REGISTRATION_MC =
-      new CheckoutRegistrationV2MapConverter();
-
-  private final PagSeguro pagSeguro;
-
-  private final HttpClient httpClient;
-
-  public CheckoutsResource(PagSeguro pagSeguroAPI, HttpClient httpClient) {
-    this.pagSeguro = pagSeguroAPI;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Checkout Registration
-   *
-   * @param checkoutRegistrationBuilder Builder for Interface with attributes for checkout
-   *                                    registration
-   * @return Response of checkout registration
-   * @see CheckoutRegistration
-   * @see RegisteredCheckout
-   */
-  public RegisteredCheckout register(Builder<CheckoutRegistration> checkoutRegistrationBuilder) {
-    return register(checkoutRegistrationBuilder.build());
-  }
-
-  /**
-   * Checkout Registration
-   *
-   * @param checkoutRegistration Interface with attributes for checkout registration
-   * @return Response of checkout registration
-   * @see CheckoutRegistration
-   * @see RegisteredCheckout
-   */
-  public RegisteredCheckout register(CheckoutRegistration checkoutRegistration) {
-    LOGGER.info("Iniciando checkout");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = CHECKOUT_REGISTRATION_MC.convert(checkoutRegistration);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.CHECKOUT_REQUEST,
-          pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar checkout");
-      throw new PagSeguroLibException(e);
+    public CheckoutsResource(PagSeguro pagSeguroAPI, HttpClient httpClient) {
+        this.pagSeguro = pagSeguroAPI;
+        this.httpClient = httpClient;
     }
-    LOGGER.info("Parseando XML de resposta");
-    RegisterCheckoutResponseXML registeredCheckout = response.parseXMLContent(pagSeguro,
-        RegisterCheckoutResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Checkout finalizado");
-    return registeredCheckout;
-  }
+
+    /**
+     * Checkout Registration
+     *
+     * @param checkoutRegistrationBuilder Builder for Interface with attributes for checkout registration
+     * @return Response of checkout registration
+     * @see CheckoutRegistration
+     * @see RegisteredCheckout
+     */
+    public RegisteredCheckout register(Builder<CheckoutRegistration> checkoutRegistrationBuilder) {
+        return register(checkoutRegistrationBuilder.build());
+    }
+
+    /**
+     * Checkout Registration
+     *
+     * @param checkoutRegistration Interface with attributes for checkout registration
+     * @return Response of checkout registration
+     * @see CheckoutRegistration
+     * @see RegisteredCheckout
+     */
+    public RegisteredCheckout register(CheckoutRegistration checkoutRegistration) {
+        getLogger().info("Iniciando checkout");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = CHECKOUT_REGISTRATION_MC.convert(checkoutRegistration);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.CHECKOUT_REQUEST,
+                    pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar checkout");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        RegisterCheckoutResponseXML registeredCheckout = response.parseXMLContent(pagSeguro,
+                RegisterCheckoutResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Checkout finalizado");
+        return registeredCheckout;
+    }
 
 }

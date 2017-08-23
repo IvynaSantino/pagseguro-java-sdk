@@ -21,67 +21,63 @@
 
 package br.com.uol.pagseguro.api.notification;
 
-import javax.servlet.http.HttpServletRequest;
-
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
 import br.com.uol.pagseguro.api.http.HttpClient;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Factory to notifications
  *
  * @author PagSeguro Internet Ltda.
  */
-public class NotificationsResource {
+public class NotificationsResource implements Loggable {
 
-  private static Log LOGGER = LoggerFactory.getLogger(NotificationsResource.class);
+    private final PagSeguro pagSeguro;
+    private final HttpClient httpClient;
 
-  private final PagSeguro pagSeguro;
-
-  private final HttpClient httpClient;
-
-  public NotificationsResource(PagSeguro pagSeguro, HttpClient httpClient) {
-    this.pagSeguro = pagSeguro;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Handle notifications
-   *
-   * @param request Http Servlet Request
-   * @param handle  Notification handle
-   */
-  public void handle(HttpServletRequest request, PagSeguroNotificationHandler handle) {
-    LOGGER.info("Iniciando handler de notificacoes");
-    if (request.getParameter("notificationCode").isEmpty()
-        || request.getParameter("notificationType").isEmpty()) {
-      throw new PagSeguroLibException(new IllegalArgumentException("Notification code or " +
-          "notification type not exists"));
+    public NotificationsResource(PagSeguro pagSeguro, HttpClient httpClient) {
+        this.pagSeguro = pagSeguro;
+        this.httpClient = httpClient;
     }
-    NotificationType notificationType =
-        NotificationType.fromName(request.getParameter("notificationType"));
-    switch (notificationType) {
-      case TRANSACTION:
-        LOGGER.info("Notificacao de transacao");
-        handle.handleTransactionNotification(pagSeguro.transactions().search()
-            .byNotificationCode(request.getParameter("notificationCode")));
-        break;
-      case APPLICATION_AUTHORIZATION:
-        LOGGER.info("Notificacao de autorizcao");
-        handle.handleAuthorizationNotification(pagSeguro.authorizations().search()
-            .byNotificationCode(request.getParameter("notificationCode")));
-        break;
-      case PRE_APPROVAL:
-        LOGGER.info("Notificacao de assinatura");
-        handle.handlePreApprovalNotification(pagSeguro.preApprovals().search()
-            .byNotificationCode(request.getParameter("notificationCode")));
-        break;
-      default:
-        throw new PagSeguroLibException(new IllegalArgumentException("Notification not exists"));
+
+    /**
+     * Handle notifications
+     *
+     * @param request Http Servlet Request
+     * @param handle  Notification handle
+     */
+    public void handle(HttpServletRequest request, PagSeguroNotificationHandler handle) {
+        getLogger().info("Iniciando handler de notificacoes");
+        if (request.getParameter("notificationCode").isEmpty()
+                || request.getParameter("notificationType").isEmpty()) {
+            throw new PagSeguroLibException(new IllegalArgumentException("Notification code or " +
+                    "notification type not exists"));
+        }
+        NotificationType notificationType =
+                NotificationType.fromName(request.getParameter("notificationType"));
+        switch (notificationType) {
+            case TRANSACTION:
+                getLogger().info("Notificacao de transacao");
+                handle.handleTransactionNotification(pagSeguro.transactions().search()
+                        .byNotificationCode(request.getParameter("notificationCode")));
+                break;
+            case APPLICATION_AUTHORIZATION:
+                getLogger().info("Notificacao de autorizcao");
+                handle.handleAuthorizationNotification(pagSeguro.authorizations().search()
+                        .byNotificationCode(request.getParameter("notificationCode")));
+                break;
+            case PRE_APPROVAL:
+                getLogger().info("Notificacao de assinatura");
+                handle.handlePreApprovalNotification(pagSeguro.preApprovals().search()
+                        .byNotificationCode(request.getParameter("notificationCode")));
+                break;
+            default:
+                throw new PagSeguroLibException(new IllegalArgumentException("Notification not exists"));
+        }
+        getLogger().info("Handler de notificacoes finalizado");
     }
-    LOGGER.info("Handler de notificacoes finalizado");
-  }
 
 }

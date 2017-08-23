@@ -21,8 +21,6 @@
 
 package br.com.uol.pagseguro.api.preapproval;
 
-import java.io.IOException;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
@@ -37,8 +35,9 @@ import br.com.uol.pagseguro.api.preapproval.search.PreApprovalSearchResource;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import java.io.IOException;
 
 
 /**
@@ -46,167 +45,165 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  *
  * @author PagSeguro Internet Ltda.
  */
-public class PreApprovalsResource {
+public class PreApprovalsResource implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(PreApprovalsResource.class.getName());
+    private static final PreApprovalRegistrationV2MapConverter PRE_APPROVAL_REGISTRATION_MC =
+            new PreApprovalRegistrationV2MapConverter();
 
-  private static final PreApprovalRegistrationV2MapConverter PRE_APPROVAL_REGISTRATION_MC =
-      new PreApprovalRegistrationV2MapConverter();
+    private static final PreApprovalChargingV2MapConverter PRE_APPROVAL_CHARGING_MC =
+            new PreApprovalChargingV2MapConverter();
 
-  private static final PreApprovalChargingV2MapConverter PRE_APPROVAL_CHARGING_MC =
-      new PreApprovalChargingV2MapConverter();
+    private static final PreApprovalCancellationV2MapConverter PRE_APPROVAL_CANCELLATION_MC =
+            new PreApprovalCancellationV2MapConverter();
 
-  private static final PreApprovalCancellationV2MapConverter PRE_APPROVAL_CANCELLATION_MC =
-      new PreApprovalCancellationV2MapConverter();
+    private final PagSeguro pagSeguro;
+    private final HttpClient httpClient;
 
-  private final PagSeguro pagSeguro;
-  private final HttpClient httpClient;
-
-  public PreApprovalsResource(PagSeguro pagSeguro, HttpClient httpClient) {
-    this.pagSeguro = pagSeguro;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Pre Approval Registration
-   *
-   * @param preApprovalRegistrationBuilder Builder for Pre Approval Registration
-   * @return Response of pre approval registration
-   * @see PreApprovalRegistration
-   * @see RegisteredPreApproval
-   */
-  public RegisteredPreApproval register(
-      Builder<PreApprovalRegistration> preApprovalRegistrationBuilder) {
-    return register(preApprovalRegistrationBuilder.build());
-  }
-
-  /**
-   * Pre Approval Registration
-   *
-   * @param preApprovalRegistration Pre Approval Registration
-   * @return Response of pre approval registration
-   * @see PreApprovalRegistration
-   * @see RegisteredPreApproval
-   */
-  public RegisteredPreApproval register(PreApprovalRegistration preApprovalRegistration) {
-    LOGGER.info("Iniciando registro pre approval");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = PRE_APPROVAL_REGISTRATION_MC.convert(preApprovalRegistration);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.PRE_APPROVAL_REQUEST,
-          pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar registro pre approval");
-      throw new PagSeguroLibException(e);
+    public PreApprovalsResource(PagSeguro pagSeguro, HttpClient httpClient) {
+        this.pagSeguro = pagSeguro;
+        this.httpClient = httpClient;
     }
-    LOGGER.info("Parseando XML de resposta");
-    RegisterPreApprovalResponseXML registeredPreApproval = response.parseXMLContent(pagSeguro,
-        RegisterPreApprovalResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Registro pre approval finalizado");
-    return registeredPreApproval;
-  }
 
-  /**
-   * Pre Approval Cancellation
-   *
-   * @param preApprovalCancellationBuilder Builder for Pre Approval Cancellation
-   * @return Response of Pre Approval Cancellation
-   * @see PreApprovalCancellation
-   * @see CancelledPreApproval
-   */
-  public CancelledPreApproval cancel(
-      Builder<PreApprovalCancellation> preApprovalCancellationBuilder) {
-    return cancel(preApprovalCancellationBuilder.build());
-  }
-
-  /**
-   * Pre Approval Cancellation
-   *
-   * @param preApprovalCancellation Pre Approval Cancellation
-   * @return Response of Pre Approval Cancellation
-   * @see PreApprovalCancellation
-   * @see CancelledPreApproval
-   */
-  public CancelledPreApproval cancel(PreApprovalCancellation preApprovalCancellation) {
-    LOGGER.info("Iniciando cancelamento pre approval");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = PRE_APPROVAL_CANCELLATION_MC.convert(preApprovalCancellation);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: preApprovalCode:%s, %s",
-          preApprovalCancellation.getCode(), map));
-      response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.PRE_APPROVAL_CANCEL,
-          pagSeguro.getHost(), preApprovalCancellation.getCode(),
-          map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
-      LOGGER.info(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar cancelamento pre approval");
-      throw new PagSeguroLibException(e);
+    /**
+     * Pre Approval Registration
+     *
+     * @param preApprovalRegistrationBuilder Builder for Pre Approval Registration
+     * @return Response of pre approval registration
+     * @see PreApprovalRegistration
+     * @see RegisteredPreApproval
+     */
+    public RegisteredPreApproval register(
+            Builder<PreApprovalRegistration> preApprovalRegistrationBuilder) {
+        return register(preApprovalRegistrationBuilder.build());
     }
-    LOGGER.info("Parseando XML de resposta");
-    CancelPreApprovalResponseXML cancelledPreApproval = response.parseXMLContent(pagSeguro,
-        CancelPreApprovalResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Cancelamento pre approval finalizado");
-    return cancelledPreApproval;
-  }
 
-  /**
-   * Pre Approval Search
-   *
-   * @return Factory to pre approval search
-   * @see PreApprovalSearchResource
-   */
-  public PreApprovalSearchResource search() {
-    return new PreApprovalSearchResource(pagSeguro, httpClient);
-  }
-
-  /**
-   * Pre Approval Charging
-   *
-   * @param preApprovalChargingBuilder Builder for Pre Approval Charging
-   * @return Response of Pre Approval Charging
-   * @see PreApprovalCharging
-   * @see ChargedPreApproval
-   */
-  public ChargedPreApproval charge(Builder<PreApprovalCharging> preApprovalChargingBuilder) {
-    return charge(preApprovalChargingBuilder.build());
-  }
-
-  /**
-   * Pre Approval Charging
-   *
-   * @param preApprovalCharging Pre Approval Charging
-   * @return Response of Pre Approval Charging
-   * @see PreApprovalCharging
-   * @see ChargedPreApproval
-   */
-  public ChargedPreApproval charge(PreApprovalCharging preApprovalCharging) {
-    LOGGER.info("Iniciando cobranca");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = PRE_APPROVAL_CHARGING_MC.convert(preApprovalCharging);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.PRE_APPROVAL_CHARGE,
-          pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar cobranca");
-      throw new PagSeguroLibException(e);
+    /**
+     * Pre Approval Registration
+     *
+     * @param preApprovalRegistration Pre Approval Registration
+     * @return Response of pre approval registration
+     * @see PreApprovalRegistration
+     * @see RegisteredPreApproval
+     */
+    public RegisteredPreApproval register(PreApprovalRegistration preApprovalRegistration) {
+        getLogger().info("Iniciando registro pre approval");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = PRE_APPROVAL_REGISTRATION_MC.convert(preApprovalRegistration);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.PRE_APPROVAL_REQUEST,
+                    pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar registro pre approval");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        RegisterPreApprovalResponseXML registeredPreApproval = response.parseXMLContent(pagSeguro,
+                RegisterPreApprovalResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Registro pre approval finalizado");
+        return registeredPreApproval;
     }
-    LOGGER.info("Parseando XML de resposta");
-    ChargePreApprovalResponseXML chargedPreApproval = response.parseXMLContent(pagSeguro,
-        ChargePreApprovalResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Cobranca finalizada");
-    return chargedPreApproval;
-  }
+
+    /**
+     * Pre Approval Cancellation
+     *
+     * @param preApprovalCancellationBuilder Builder for Pre Approval Cancellation
+     * @return Response of Pre Approval Cancellation
+     * @see PreApprovalCancellation
+     * @see CancelledPreApproval
+     */
+    public CancelledPreApproval cancel(
+            Builder<PreApprovalCancellation> preApprovalCancellationBuilder) {
+        return cancel(preApprovalCancellationBuilder.build());
+    }
+
+    /**
+     * Pre Approval Cancellation
+     *
+     * @param preApprovalCancellation Pre Approval Cancellation
+     * @return Response of Pre Approval Cancellation
+     * @see PreApprovalCancellation
+     * @see CancelledPreApproval
+     */
+    public CancelledPreApproval cancel(PreApprovalCancellation preApprovalCancellation) {
+        getLogger().info("Iniciando cancelamento pre approval");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = PRE_APPROVAL_CANCELLATION_MC.convert(preApprovalCancellation);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: preApprovalCode:%s, %s",
+                    preApprovalCancellation.getCode(), map));
+            response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.PRE_APPROVAL_CANCEL,
+                    pagSeguro.getHost(), preApprovalCancellation.getCode(),
+                    map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
+            getLogger().info(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar cancelamento pre approval");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        CancelPreApprovalResponseXML cancelledPreApproval = response.parseXMLContent(pagSeguro,
+                CancelPreApprovalResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Cancelamento pre approval finalizado");
+        return cancelledPreApproval;
+    }
+
+    /**
+     * Pre Approval Search
+     *
+     * @return Factory to pre approval search
+     * @see PreApprovalSearchResource
+     */
+    public PreApprovalSearchResource search() {
+        return new PreApprovalSearchResource(pagSeguro, httpClient);
+    }
+
+    /**
+     * Pre Approval Charging
+     *
+     * @param preApprovalChargingBuilder Builder for Pre Approval Charging
+     * @return Response of Pre Approval Charging
+     * @see PreApprovalCharging
+     * @see ChargedPreApproval
+     */
+    public ChargedPreApproval charge(Builder<PreApprovalCharging> preApprovalChargingBuilder) {
+        return charge(preApprovalChargingBuilder.build());
+    }
+
+    /**
+     * Pre Approval Charging
+     *
+     * @param preApprovalCharging Pre Approval Charging
+     * @return Response of Pre Approval Charging
+     * @see PreApprovalCharging
+     * @see ChargedPreApproval
+     */
+    public ChargedPreApproval charge(PreApprovalCharging preApprovalCharging) {
+        getLogger().info("Iniciando cobranca");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = PRE_APPROVAL_CHARGING_MC.convert(preApprovalCharging);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.PRE_APPROVAL_CHARGE,
+                    pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar cobranca");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        ChargePreApprovalResponseXML chargedPreApproval = response.parseXMLContent(pagSeguro,
+                ChargePreApprovalResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Cobranca finalizada");
+        return chargedPreApproval;
+    }
 }

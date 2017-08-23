@@ -21,12 +21,10 @@
 
 package br.com.uol.pagseguro.api.environment;
 
+import br.com.uol.pagseguro.api.PagSeguroEnv;
+
 import java.io.InputStream;
 import java.util.Properties;
-
-import br.com.uol.pagseguro.api.PagSeguroEnv;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
 
 /**
  * Class responsible for providing the environment configurations of properties file
@@ -36,33 +34,30 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
 
 public class SystemPropEnvironmentProvider implements EnvironmentProvider {
 
-  private static final Log LOGGER =
-      LoggerFactory.getLogger(SystemPropEnvironmentProvider.class);
+    private final String file;
 
-  private final String file;
-
-  SystemPropEnvironmentProvider(String file) {
-    this.file = file;
-  }
-
-  /**
-   * Get configurations environment
-   *
-   * @return Configurations environment
-   */
-  @Override
-  public PagSeguroEnv getEnvironment() throws Exception {
-    LOGGER.info("Lendo configuracoes de ambiente");
-    final PagSeguroEnv environment;
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
-    Properties properties = new Properties();
-    properties.load(inputStream);
-    if (properties.getProperty("environment") != null) {
-      environment = PagSeguroEnv.fromName(properties.getProperty("environment"));
-    } else {
-      throw new IllegalArgumentException("Environment property not found");
+    SystemPropEnvironmentProvider(String file) {
+        this.file = file;
     }
-    LOGGER.info("Configuracoes de ambiente lidas");
-    return environment;
-  }
+
+    /**
+     * Get configurations environment
+     *
+     * @return Configurations environment
+     */
+    @Override
+    public PagSeguroEnv getEnvironment() throws Exception {
+        getLogger().info("Lendo configuracoes de ambiente");
+        final PagSeguroEnv environment;
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        if (properties.getProperty("environment") != null) {
+            environment = PagSeguroEnv.fromName(properties.getProperty("environment"));
+        } else {
+            throw new IllegalArgumentException("Environment property not found");
+        }
+        getLogger().info("Configuracoes de ambiente lidas");
+        return environment;
+    }
 }

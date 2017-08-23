@@ -21,9 +21,6 @@
 
 package br.com.uol.pagseguro.api.transaction.search;
 
-import java.io.IOException;
-import java.util.Map;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.DataList;
@@ -35,8 +32,9 @@ import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.PagSeguroCommand;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Search transactions abandoned
@@ -45,57 +43,54 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  * @see PagSeguroCommand
  * @see TransactionSummary
  */
-class TransactionSearchByAbandoned implements PagSeguroCommand<DataList<? extends
-    TransactionSummary>> {
+class TransactionSearchByAbandoned implements PagSeguroCommand<DataList<? extends TransactionSummary>> {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(TransactionSearchByAbandoned.class);
+    private static final TransactionSearchV2MapConverter TRANSACTION_SEARCH_MP =
+            new TransactionSearchV2MapConverter();
 
-  private static final TransactionSearchV2MapConverter TRANSACTION_SEARCH_MP =
-      new TransactionSearchV2MapConverter();
+    private final TransactionSearch transactionSearch;
 
-  private final TransactionSearch transactionSearch;
-
-  /**
-   * Constructor
-   *
-   * @param transactionSearch Interface for Transaction Search
-   */
-  TransactionSearchByAbandoned(TransactionSearch transactionSearch) {
-    this.transactionSearch = transactionSearch;
-  }
-
-  /**
-   * Execute Search Transactions Abandoned
-   *
-   * @param pagseguro  Pageseguro instance
-   * @param httpClient Http Client
-   * @return Transactions Abandoned List
-   * @see PagSeguroCommand#execute(PagSeguro, HttpClient)
-   * @see TransactionSummary
-   * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
-   */
-  @Override
-  public DataList<? extends TransactionSummary> execute(PagSeguro pagseguro,
-                                                        HttpClient httpClient) {
-    LOGGER.info("Iniciando busca de transacao abandonada");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = TRANSACTION_SEARCH_MP.convert(transactionSearch);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.TRANSACTION_ABANDONED,
-          pagseguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar busca de transacao abandonada");
-      throw new PagSeguroLibException(e);
+    /**
+     * Constructor
+     *
+     * @param transactionSearch Interface for Transaction Search
+     */
+    TransactionSearchByAbandoned(TransactionSearch transactionSearch) {
+        this.transactionSearch = transactionSearch;
     }
-    LOGGER.info("Parseando XML de resposta");
-    DataList<? extends TransactionSummary> transactionsSummary = response.parseXMLContent(pagseguro,
-        TransactionSearchResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Busca de transacao abandonada finalizada");
-    return transactionsSummary;
-  }
+
+    /**
+     * Execute Search Transactions Abandoned
+     *
+     * @param pagseguro  Pageseguro instance
+     * @param httpClient Http Client
+     * @return Transactions Abandoned List
+     * @see PagSeguroCommand#execute(PagSeguro, HttpClient)
+     * @see TransactionSummary
+     * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
+     */
+    @Override
+    public DataList<? extends TransactionSummary> execute(PagSeguro pagseguro,
+                                                          HttpClient httpClient) {
+        getLogger().info("Iniciando busca de transacao abandonada");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = TRANSACTION_SEARCH_MP.convert(transactionSearch);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.TRANSACTION_ABANDONED,
+                    pagseguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar busca de transacao abandonada");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        DataList<? extends TransactionSummary> transactionsSummary = response.parseXMLContent(pagseguro,
+                TransactionSearchResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Busca de transacao abandonada finalizada");
+        return transactionsSummary;
+    }
 }

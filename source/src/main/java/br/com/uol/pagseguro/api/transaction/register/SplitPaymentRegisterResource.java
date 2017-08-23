@@ -21,8 +21,6 @@
 
 package br.com.uol.pagseguro.api.transaction.register;
 
-import java.io.IOException;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.Bank;
@@ -39,8 +37,9 @@ import br.com.uol.pagseguro.api.transaction.search.TransactionDetailXML;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import java.io.IOException;
 
 /**
  * Factory to register direct payments.
@@ -49,161 +48,154 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  *
  * @author PagSeguro Internet Ltda.
  */
-public class SplitPaymentRegisterResource {
+public class SplitPaymentRegisterResource implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(SplitPaymentRegisterResource.class);
+    private final PagSeguro pagSeguro;
+    private final HttpClient httpClient;
+    private final SplitPaymentRegistration splitPaymentRegistration;
 
-  private final PagSeguro pagSeguro;
+    private static final SplitPaymentRegistrationV3MapConverter SPLIT_PAYMENT_REGISTRATION_MC = new SplitPaymentRegistrationV3MapConverter();
+    private static final CreditCardV3MapConverter CREDIT_CARD_MC = new CreditCardV3MapConverter();
+    private static final BankV3MapConverter BANK_MC = new BankV3MapConverter();
 
-  private final HttpClient httpClient;
-
-  private final SplitPaymentRegistration splitPaymentRegistration;
-
-  private static final SplitPaymentRegistrationV3MapConverter SPLIT_PAYMENT_REGISTRATION_MC =
-      new SplitPaymentRegistrationV3MapConverter();
-
-  private static final CreditCardV3MapConverter CREDIT_CARD_MC = new CreditCardV3MapConverter();
-
-  private static final BankV3MapConverter BANK_MC = new BankV3MapConverter();
-
-  /**
-   * Constructor
-   *
-   * @param pagSeguro                Pagseguro
-   * @param httpClient               Http Client
-   * @param splitPaymentRegistration Interface with the attributes of Split Payment Registration.
-   */
-  public SplitPaymentRegisterResource(PagSeguro pagSeguro,
-                                      HttpClient httpClient,
-                                      SplitPaymentRegistration splitPaymentRegistration) {
-    this.pagSeguro = pagSeguro;
-    this.httpClient = httpClient;
-    this.splitPaymentRegistration = splitPaymentRegistration;
-  }
-
-  /**
-   * Execute split payment with bank slip
-   *
-   * @return Response of split payment registration
-   * @see TransactionDetail
-   */
-  public TransactionDetail withBankSlip() {
-    LOGGER.info("Iniciando split de pagamento com boleto");
-    LOGGER.info("Convertendo valores");
-
-    final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-    map.putString("payment.method", TransactionMethod.PaymentMethod.BANK_SLIP.getName());
-
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.POST,
-          String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
-          map.toHttpRequestBody(CharSet.ENCODING_ISO));
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar split de pagamento com boleto");
-      throw new PagSeguroLibException(e);
+    /**
+     * Constructor
+     *
+     * @param pagSeguro                Pagseguro
+     * @param httpClient               Http Client
+     * @param splitPaymentRegistration Interface with the attributes of Split Payment Registration.
+     */
+    public SplitPaymentRegisterResource(PagSeguro pagSeguro,
+                                        HttpClient httpClient,
+                                        SplitPaymentRegistration splitPaymentRegistration) {
+        this.pagSeguro = pagSeguro;
+        this.httpClient = httpClient;
+        this.splitPaymentRegistration = splitPaymentRegistration;
     }
-    LOGGER.info("Parseando XML de resposta");
-    TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Split de pagamento com boleto finalizado");
-    return transaction;
-  }
 
-  /**
-   * Execute split payment with credit card
-   *
-   * @param creditCard Interface with attributes of Credit Card
-   * @return Response of direct payment registration
-   * @see CreditCard
-   * @see TransactionDetail
-   */
-  public TransactionDetail withCreditCard(CreditCard creditCard) {
-    LOGGER.info("Iniciando split de pagamento com cartao de credito");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-    map.putString("payment.method", TransactionMethod.PaymentMethod.CREDIT_CARD.getName());
-    map.putMap(CREDIT_CARD_MC.convert(creditCard));
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.POST,
-          String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
-          map.toHttpRequestBody(CharSet.ENCODING_ISO));
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar split de pagamento com cartao de credito");
-      throw new PagSeguroLibException(e);
+    /**
+     * Execute split payment with bank slip
+     *
+     * @return Response of split payment registration
+     * @see TransactionDetail
+     */
+    public TransactionDetail withBankSlip() {
+        getLogger().info("Iniciando split de pagamento com boleto");
+        getLogger().info("Convertendo valores");
+
+        final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
+        map.putString("payment.method", TransactionMethod.PaymentMethod.BANK_SLIP.getName());
+
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.POST,
+                    String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
+                    map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar split de pagamento com boleto");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Split de pagamento com boleto finalizado");
+        return transaction;
     }
-    LOGGER.info("Parseando XML de resposta");
-    TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Split de pagamento com cartao de credito finalizado");
-    return transaction;
-  }
 
-  /**
-   * Execute split payment with credit card
-   *
-   * @param creditCardBuilder Builder for attributes of Credit Card
-   * @return Response of split payment registration
-   * @see CreditCard
-   * @see TransactionDetail
-   */
-  public TransactionDetail withCreditCard(Builder<CreditCard> creditCardBuilder) {
-    return withCreditCard(creditCardBuilder.build());
-  }
-
-  /**
-   * Execute split payment with online debit
-   *
-   * @param bank Interface with attributes of bank slip
-   * @return Response of split payment registration
-   * @see TransactionDetail
-   * @see Bank
-   */
-  public TransactionDetail withOnlineDebit(Bank bank) {
-    LOGGER.info("Iniciando split de pagamento com debito online");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-    map.putString("payment.method", TransactionMethod.PaymentMethod.ONLINE_DEBIT.getName());
-    map.putMap(BANK_MC.convert(bank));
-    LOGGER.info("Valores convertidos");
-
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-
-      response = httpClient.execute(HttpMethod.POST,
-          String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
-          map.toHttpRequestBody(CharSet.ENCODING_ISO));
-
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar split de pagamento com debito online");
-      throw new PagSeguroLibException(e);
+    /**
+     * Execute split payment with credit card
+     *
+     * @param creditCard Interface with attributes of Credit Card
+     * @return Response of direct payment registration
+     * @see CreditCard
+     * @see TransactionDetail
+     */
+    public TransactionDetail withCreditCard(CreditCard creditCard) {
+        getLogger().info("Iniciando split de pagamento com cartao de credito");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
+        map.putString("payment.method", TransactionMethod.PaymentMethod.CREDIT_CARD.getName());
+        map.putMap(CREDIT_CARD_MC.convert(creditCard));
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.POST,
+                    String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
+                    map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar split de pagamento com cartao de credito");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Split de pagamento com cartao de credito finalizado");
+        return transaction;
     }
-    LOGGER.info("Parseando XML de resposta");
-    TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Split de pagamento com debito online finalizado");
-    return transaction;
-  }
 
-  /**
-   * Execute split payment with online debit
-   *
-   * @param bankBuilder Builder for attributes of bank
-   * @return Response of split payment registration
-   * @see Bank
-   * @see TransactionDetail
-   */
-  public TransactionDetail withOnlineDebit(Builder<Bank> bankBuilder) {
-    return withOnlineDebit(bankBuilder.build());
-  }
+    /**
+     * Execute split payment with credit card
+     *
+     * @param creditCardBuilder Builder for attributes of Credit Card
+     * @return Response of split payment registration
+     * @see CreditCard
+     * @see TransactionDetail
+     */
+    public TransactionDetail withCreditCard(Builder<CreditCard> creditCardBuilder) {
+        return withCreditCard(creditCardBuilder.build());
+    }
+
+    /**
+     * Execute split payment with online debit
+     *
+     * @param bank Interface with attributes of bank slip
+     * @return Response of split payment registration
+     * @see TransactionDetail
+     * @see Bank
+     */
+    public TransactionDetail withOnlineDebit(Bank bank) {
+        getLogger().info("Iniciando split de pagamento com debito online");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
+        map.putString("payment.method", TransactionMethod.PaymentMethod.ONLINE_DEBIT.getName());
+        map.putMap(BANK_MC.convert(bank));
+        getLogger().info("Valores convertidos");
+
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+
+            response = httpClient.execute(HttpMethod.POST,
+                    String.format(Endpoints.SPLIT_PAYMENT, pagSeguro.getHost()), null,
+                    map.toHttpRequestBody(CharSet.ENCODING_ISO));
+
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar split de pagamento com debito online");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Split de pagamento com debito online finalizado");
+        return transaction;
+    }
+
+    /**
+     * Execute split payment with online debit
+     *
+     * @param bankBuilder Builder for attributes of bank
+     * @return Response of split payment registration
+     * @see Bank
+     * @see TransactionDetail
+     */
+    public TransactionDetail withOnlineDebit(Builder<Bank> bankBuilder) {
+        return withOnlineDebit(bankBuilder.build());
+    }
 
 }

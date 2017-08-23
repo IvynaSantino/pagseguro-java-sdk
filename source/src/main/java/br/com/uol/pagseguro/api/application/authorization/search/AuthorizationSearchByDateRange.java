@@ -20,9 +20,6 @@
  */
 package br.com.uol.pagseguro.api.application.authorization.search;
 
-import java.io.IOException;
-import java.util.Map;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.DataList;
@@ -34,64 +31,61 @@ import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.PagSeguroCommand;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Search authorizations by date range
  *
  * @author PagSeguro Internet Ltda.
  */
-class AuthorizationSearchByDateRange implements PagSeguroCommand<DataList<? extends
-    AuthorizationSummary>> {
+class AuthorizationSearchByDateRange implements PagSeguroCommand<DataList<? extends AuthorizationSummary>> {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(AuthorizationSearchByDateRange.class);
+    private final AuthorizationSearch authorizationSearch;
 
-  private final AuthorizationSearch authorizationSearch;
+    private static final AuthorizationSearchV2MapConverter AUTHORIZATION_SEARCH_MP =
+            new AuthorizationSearchV2MapConverter();
 
-  private static final AuthorizationSearchV2MapConverter AUTHORIZATION_SEARCH_MP =
-      new AuthorizationSearchV2MapConverter();
-
-  /**
-   * @param authorizationSearch The interface with params that you want to search
-   */
-  AuthorizationSearchByDateRange(AuthorizationSearch authorizationSearch) {
-    this.authorizationSearch = authorizationSearch;
-  }
-
-  /**
-   * Execute search by date range
-   *
-   * @param pagseguro  The instance of Pagseguro. Used on unmarshal and used to get current host.
-   * @param httpClient Http client instance. Used to execute the search.
-   * @return Authorizations list
-   * @see AuthorizationSummary
-   * @see DataList
-   * @see PagSeguro
-   * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
-   */
-  @Override
-  public DataList<? extends AuthorizationSummary> execute(PagSeguro pagseguro,
-                                                          HttpClient httpClient) {
-    LOGGER.info("Iniciando busca de autorizacao por intervalo de data");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = AUTHORIZATION_SEARCH_MP.convert(authorizationSearch);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.AUTHORIZATION_SEARCH,
-          pagseguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar busca de autorizacao por intervalo de data");
-      throw new PagSeguroLibException(e);
+    /**
+     * @param authorizationSearch The interface with params that you want to search
+     */
+    AuthorizationSearchByDateRange(AuthorizationSearch authorizationSearch) {
+        this.authorizationSearch = authorizationSearch;
     }
-    LOGGER.info("Parseando XML de resposta");
-    DataList<? extends AuthorizationSummary> authorizationsSummary =
-        response.parseXMLContent(pagseguro, AuthorizationSearchResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Busca de autorizacao por intervalo de data finalizada");
-    return authorizationsSummary;
-  }
+
+    /**
+     * Execute search by date range
+     *
+     * @param pagseguro  The instance of Pagseguro. Used on unmarshal and used to get current host.
+     * @param httpClient Http client instance. Used to execute the search.
+     * @return Authorizations list
+     * @see AuthorizationSummary
+     * @see DataList
+     * @see PagSeguro
+     * @see HttpClient#execute(HttpMethod, String, Map, HttpRequestBody)
+     */
+    @Override
+    public DataList<? extends AuthorizationSummary> execute(PagSeguro pagseguro, HttpClient httpClient) {
+        getLogger().info("Iniciando busca de autorizacao por intervalo de data");
+
+        getLogger().debug("Convertendo valores");
+        final RequestMap map = AUTHORIZATION_SEARCH_MP.convert(authorizationSearch);
+        getLogger().debug("Valores convertidos");
+
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.AUTHORIZATION_SEARCH, pagseguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar busca de autorizacao por intervalo de data");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().debug("Parseando XML de resposta");
+        final DataList<? extends AuthorizationSummary> authorizationsSummary = response.parseXMLContent(pagseguro, AuthorizationSearchResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Busca de autorizacao por intervalo de data finalizada");
+        return authorizationsSummary;
+    }
 }

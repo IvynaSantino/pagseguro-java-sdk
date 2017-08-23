@@ -21,45 +21,26 @@
 
 package br.com.uol.pagseguro.api;
 
-import org.junit.Before;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-
 import br.com.uol.pagseguro.api.credential.Credential;
 import br.com.uol.pagseguro.api.http.HttpClient;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 
 /**
  * @author PagSeguro Internet Ltda.
  */
-@PrepareForTest({LoggerFactory.class})
+@PrepareForTest
 public class Resource4Test {
 
-  @Mock
-  protected HttpClient httpClient;
+    @Mock
+    protected HttpClient httpClient;
 
-  @Mock
-  protected LoggerFactory loggerFactory;
+    protected PagSeguro pagSeguro;
 
-  @Mock
-  protected Log logger;
-
-  protected PagSeguro pagSeguro;
-
-  @Before
-  public void setUpResource() throws Exception {
-    PowerMockito.mockStatic(LoggerFactory.class);
-    when(LoggerFactory.getLogger(anyString())).thenReturn(logger);
-    when(LoggerFactory.getLogger(any(Class.class))).thenReturn(logger);
-
-    pagSeguro = PagSeguro.instance(loggerFactory, httpClient, Credential.sellerCredential("email", "token"),
-        PagSeguroEnv.SANDBOX);
-  }
+    @Before
+    public void setUpResource() throws Exception {
+        pagSeguro = PagSeguro.instance(httpClient, Credential.sellerCredential("email", "token"), PagSeguroEnv.SANDBOX);
+    }
 }

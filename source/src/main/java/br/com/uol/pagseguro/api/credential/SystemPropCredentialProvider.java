@@ -24,9 +24,6 @@ package br.com.uol.pagseguro.api.credential;
 import java.io.InputStream;
 import java.util.Properties;
 
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
-
 /**
  * This class is responsible for retrieving the credentials through the system settings
  * (.properties)
@@ -35,43 +32,38 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  */
 public class SystemPropCredentialProvider implements CredentialProvider {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(SystemPropCredentialProvider.class);
+    private final String file;
 
-  private final String file;
-
-  /**
-   * Constructor
-   *
-   * @param file Path file
-   */
-  SystemPropCredentialProvider(String file) {
-    this.file = file;
-  }
-
-  /**
-   * Retrieve the credentials through the system settings (.properties)
-   *
-   * @return Credentials by system properties
-   */
-  @Override
-  public Credential getCredential() throws Exception {
-    LOGGER.info("Lendo credenciais");
-    final Credential credential;
-    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
-    Properties properties = new Properties();
-    properties.load(inputStream);
-    if (properties.getProperty("email") != null && properties.getProperty("token") != null) {
-      credential = Credential.sellerCredential(properties.getProperty("email"),
-          properties.getProperty("token"));
-    } else if (properties.getProperty("appId") != null
-        && properties.getProperty("appKey") != null) {
-      credential = Credential.applicationCredential(properties.getProperty("appId"),
-          properties.getProperty("appKey"));
-    } else {
-      throw new IllegalArgumentException("Seller credential and Application credential not found");
+    /**
+     * Constructor
+     *
+     * @param file Path file
+     */
+    SystemPropCredentialProvider(String file) {
+        this.file = file;
     }
-    inputStream.close();
-    LOGGER.info("Credenciais lidas");
-    return credential;
-  }
+
+    /**
+     * Retrieve the credentials through the system settings (.properties)
+     *
+     * @return Credentials by system properties
+     */
+    @Override
+    public Credential getCredential() throws Exception {
+        getLogger().info("Lendo credenciais");
+        final Credential credential;
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(file);
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        if (properties.getProperty("email") != null && properties.getProperty("token") != null) {
+            credential = Credential.sellerCredential(properties.getProperty("email"), properties.getProperty("token"));
+        } else if (properties.getProperty("appId") != null && properties.getProperty("appKey") != null) {
+            credential = Credential.applicationCredential(properties.getProperty("appId"), properties.getProperty("appKey"));
+        } else {
+            throw new IllegalArgumentException("Seller credential and Application credential not found");
+        }
+        inputStream.close();
+        getLogger().info("Credenciais lidas");
+        return credential;
+    }
 }

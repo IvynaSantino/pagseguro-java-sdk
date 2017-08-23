@@ -20,10 +20,6 @@
  */
 package br.com.uol.pagseguro.api.credential;
 
-import br.com.uol.pagseguro.api.environment.SystemEnvVariableEnvironmentProvider;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
-
 /**
  * This class is responsible for retrieving the credentials through the system environments
  * variable.
@@ -32,31 +28,27 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  */
 public class SystemEnvVariableCredentialProvider implements CredentialProvider {
 
-  private static final Log LOGGER =
-      LoggerFactory.getLogger(SystemEnvVariableEnvironmentProvider.class);
 
-  SystemEnvVariableCredentialProvider() {
-  }
-
-  /**
-   * Retrieve the credentials through the system environments variable.
-   *
-   * @return Credential
-   */
-  @Override
-  public Credential getCredential() {
-    LOGGER.info("Lendo credenciais");
-    final Credential credential;
-    if (System.getenv("PSL_EMAIL") != null && System.getenv("PSL_TOKEN") != null) {
-      credential = Credential.sellerCredential(System.getenv("PSL_EMAIL").trim(),
-          System.getenv("PSL_TOKEN").trim());
-    } else if (System.getenv("PSL_APP_ID") != null && System.getenv("PSL_APP_KEY") != null) {
-      credential = Credential.applicationCredential(System.getenv("PSL_APP_ID").trim(),
-          System.getenv("PSL_APP_KEY").trim());
-    } else {
-      throw new IllegalArgumentException("Seller credential and Application credential not found");
+    SystemEnvVariableCredentialProvider() {
     }
-    LOGGER.info("Credenciais lidas");
-    return credential;
-  }
+
+    /**
+     * Retrieve the credentials through the system environments variable.
+     *
+     * @return Credential
+     */
+    @Override
+    public Credential getCredential() {
+        getLogger().info("Lendo credenciais");
+        final Credential credential;
+        if (System.getenv("PSL_EMAIL") != null && System.getenv("PSL_TOKEN") != null) {
+            credential = Credential.sellerCredential(System.getenv("PSL_EMAIL").trim(), System.getenv("PSL_TOKEN").trim());
+        } else if (System.getenv("PSL_APP_ID") != null && System.getenv("PSL_APP_KEY") != null) {
+            credential = Credential.applicationCredential(System.getenv("PSL_APP_ID").trim(), System.getenv("PSL_APP_KEY").trim());
+        } else {
+            throw new IllegalArgumentException("Seller credential and Application credential not found");
+        }
+        getLogger().info("Credenciais lidas");
+        return credential;
+    }
 }

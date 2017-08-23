@@ -1,13 +1,11 @@
 package br.com.uol.pagseguro.api.environment;
 
+import br.com.uol.pagseguro.api.PagSeguroEnv;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import br.com.uol.pagseguro.api.Case4Test;
-import br.com.uol.pagseguro.api.PagSeguroEnv;
 
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
@@ -18,33 +16,33 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({System.class, JVMEnvVariableEnvironmentProvider.class})
-public class JVMEnvVariableEnvironmentProviderTest extends Case4Test {
+public class JVMEnvVariableEnvironmentProviderTest {
 
-  private JVMEnvVariableEnvironmentProvider provider;
+    private JVMEnvVariableEnvironmentProvider provider;
 
-  @Before
-  public void setUp() throws Exception {
-    provider = new JVMEnvVariableEnvironmentProvider();
-    mockStatic(System.class);
-  }
+    @Before
+    public void setUp() throws Exception {
+        provider = new JVMEnvVariableEnvironmentProvider();
+        mockStatic(System.class);
+    }
 
-  @Test
-  public void shouldGetSandboxEnv() throws Exception {
-    when(System.getProperty("pagseguro.environment")).thenReturn("sandbox");
-    PagSeguroEnv expectedEnv = PagSeguroEnv.SANDBOX;
+    @Test
+    public void shouldGetSandboxEnv() throws Exception {
+        when(System.getProperty("pagseguro.environment")).thenReturn("sandbox");
+        PagSeguroEnv expectedEnv = PagSeguroEnv.SANDBOX;
 
-    PagSeguroEnv env = provider.getEnvironment();
+        PagSeguroEnv env = provider.getEnvironment();
 
-    assertEquals(expectedEnv, env);
-  }
+        assertEquals(expectedEnv, env);
+    }
 
-  @Test
-  public void shouldGetProductionEnv() throws Exception {
-    when(System.getProperty("pagseguro.environment")).thenReturn("production");
-    PagSeguroEnv expectedEnv = PagSeguroEnv.PRODUCTION;
+    @Test
+    public void shouldGetProductionEnv() throws Exception {
+        when(System.getProperty("pagseguro.environment")).thenReturn("production");
+        PagSeguroEnv expectedEnv = PagSeguroEnv.PRODUCTION;
 
-    PagSeguroEnv env = provider.getEnvironment();
+        PagSeguroEnv env = provider.getEnvironment();
 
-    assertEquals(expectedEnv, env);
-  }
+        assertEquals(expectedEnv, env);
+    }
 }

@@ -21,19 +21,21 @@
 
 package br.com.uol.pagseguro.api.credential;
 
+import br.com.uol.pagseguro.api.utils.Loggable;
+
 /**
  * Interface to provide the credentials
  *
  * @author PagSeguro Internet Ltda.
  */
-public interface CredentialProvider {
+public interface CredentialProvider extends Loggable {
 
-  /**
-   * Get credential
-   *
-   * @return The credential used by user.
-   * @see Credential
-   */
-  Credential getCredential() throws Exception;
+    /**
+     * Get credential
+     *
+     * @return The credential used by user.
+     * @see Credential
+     */
+    Credential getCredential() throws Exception;
 
 }

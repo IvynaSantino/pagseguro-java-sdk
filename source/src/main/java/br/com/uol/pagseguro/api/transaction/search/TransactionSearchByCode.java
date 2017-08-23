@@ -31,8 +31,6 @@ import br.com.uol.pagseguro.api.http.HttpMethod;
 import br.com.uol.pagseguro.api.http.HttpRequestBody;
 import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.PagSeguroCommand;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
 
 /**
  * Search transaction by code
@@ -42,8 +40,6 @@ import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
  * @see TransactionDetail
  */
 class TransactionSearchByCode implements PagSeguroCommand<TransactionDetail> {
-
-  private static final Log LOGGER = LoggerFactory.getLogger(TransactionSearchByCode.class);
 
   private final String code;
 
@@ -68,22 +64,22 @@ class TransactionSearchByCode implements PagSeguroCommand<TransactionDetail> {
    */
   @Override
   public TransactionDetail execute(PagSeguro pagseguro, HttpClient httpClient) {
-    LOGGER.info("Iniciando busca de transacao por codigo");
+    getLogger().info("Iniciando busca de transacao por codigo");
     final HttpResponse response;
     try {
-      LOGGER.debug(String.format("Parametros: transactionCode:%s", code));
+      getLogger().debug(String.format("Parametros: transactionCode:%s", code));
       response = httpClient.execute(HttpMethod.GET,
           String.format(Endpoints.TRANSACTION_SEARCH_BY_CODE, pagseguro.getHost(), code), null,
           null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
+      getLogger().debug(String.format("Resposta: %s", response.toString()));
     } catch (IOException e) {
-      LOGGER.error("Erro ao executar busca de transacao por codigo");
+      getLogger().error("Erro ao executar busca de transacao por codigo");
       throw new PagSeguroLibException(e);
     }
-    LOGGER.info("Parseando XML de resposta");
+    getLogger().info("Parseando XML de resposta");
     TransactionDetail transaction = response.parseXMLContent(pagseguro, TransactionDetailXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Busca de transacao por codigo finalizada");
+    getLogger().info("Parseamento finalizado");
+    getLogger().info("Busca de transacao por codigo finalizada");
     return transaction;
   }
 

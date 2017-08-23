@@ -20,8 +20,6 @@
  */
 package br.com.uol.pagseguro.api.installment;
 
-import java.io.IOException;
-
 import br.com.uol.pagseguro.api.Endpoints;
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.DataList;
@@ -32,72 +30,69 @@ import br.com.uol.pagseguro.api.http.HttpResponse;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
 import br.com.uol.pagseguro.api.utils.RequestMap;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import java.io.IOException;
 
 /**
  * Factory to installment list
  *
  * @author PagSeguro Internet Ltda.
  */
-public class InstallmentsListResource {
+public class InstallmentsListResource implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(InstallmentsListResource.class);
+    private static final InstallmentRequestV2MapConverter INSTALLMENT_LISTING_MC = new InstallmentRequestV2MapConverter();
+    private final PagSeguro pagSeguro;
+    private final HttpClient httpClient;
 
-  private static final InstallmentRequestV2MapConverter INSTALLMENT_LISTING_MC =
-      new InstallmentRequestV2MapConverter();
-
-  private final PagSeguro pagSeguro;
-  private final HttpClient httpClient;
-
-  /**
-   * Constructor
-   *
-   * @param pagSeguro  Pagseguro
-   * @param httpClient HttpClient
-   */
-  public InstallmentsListResource(PagSeguro pagSeguro, HttpClient httpClient) {
-    this.pagSeguro = pagSeguro;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * List installments
-   *
-   * @param installmentListingBuilder Builder for Installment listing
-   * @return Installment list
-   */
-  public DataList<? extends InstallmentDetail> list(
-      Builder<InstallmentRequest> installmentListingBuilder) {
-    return list(installmentListingBuilder.build());
-  }
-
-  /**
-   * List installments
-   *
-   * @param installmentRequest Interface for Installment listing
-   * @return Installment list
-   */
-  public DataList<? extends InstallmentDetail> list(InstallmentRequest installmentRequest) {
-    LOGGER.info("Iniciando installment");
-    LOGGER.info("Convertendo valores");
-    final RequestMap map = INSTALLMENT_LISTING_MC.convert(installmentRequest);
-    LOGGER.info("Valores convertidos");
-    final HttpResponse response;
-    try {
-      LOGGER.debug(String.format("Parametros: %s", map));
-      response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.INSTALLMENT_SEARCH,
-          pagSeguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
-      LOGGER.debug(String.format("Resposta: %s", response.toString()));
-    } catch (IOException e) {
-      LOGGER.error("Erro ao executar installment");
-      throw new PagSeguroLibException(e);
+    /**
+     * Constructor
+     *
+     * @param pagSeguro  Pagseguro
+     * @param httpClient HttpClient
+     */
+    public InstallmentsListResource(PagSeguro pagSeguro, HttpClient httpClient) {
+        this.pagSeguro = pagSeguro;
+        this.httpClient = httpClient;
     }
-    LOGGER.info("Parseando XML de resposta");
-    DataList<? extends InstallmentDetail> installmentsDetail = response.parseXMLContent(pagSeguro,
-        InstallmentListingResponseXML.class);
-    LOGGER.info("Parseamento finalizado");
-    LOGGER.info("Installment finalizado");
-    return installmentsDetail;
-  }
+
+    /**
+     * List installments
+     *
+     * @param installmentListingBuilder Builder for Installment listing
+     * @return Installment list
+     */
+    public DataList<? extends InstallmentDetail> list(
+            Builder<InstallmentRequest> installmentListingBuilder) {
+        return list(installmentListingBuilder.build());
+    }
+
+    /**
+     * List installments
+     *
+     * @param installmentRequest Interface for Installment listing
+     * @return Installment list
+     */
+    public DataList<? extends InstallmentDetail> list(InstallmentRequest installmentRequest) {
+        getLogger().info("Iniciando installment");
+        getLogger().info("Convertendo valores");
+        final RequestMap map = INSTALLMENT_LISTING_MC.convert(installmentRequest);
+        getLogger().info("Valores convertidos");
+        final HttpResponse response;
+        try {
+            getLogger().debug(String.format("Parametros: %s", map));
+            response = httpClient.execute(HttpMethod.GET, String.format(Endpoints.INSTALLMENT_SEARCH,
+                    pagSeguro.getHost(), map.toUrlEncode(CharSet.ENCODING_UTF)), null, null);
+            getLogger().debug(String.format("Resposta: %s", response.toString()));
+        } catch (IOException e) {
+            getLogger().error("Erro ao executar installment");
+            throw new PagSeguroLibException(e);
+        }
+        getLogger().info("Parseando XML de resposta");
+        DataList<? extends InstallmentDetail> installmentsDetail = response.parseXMLContent(pagSeguro,
+                InstallmentListingResponseXML.class);
+        getLogger().info("Parseamento finalizado");
+        getLogger().info("Installment finalizado");
+        return installmentsDetail;
+    }
 }

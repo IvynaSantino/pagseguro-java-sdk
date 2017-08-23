@@ -21,13 +21,12 @@
 
 package br.com.uol.pagseguro.api.environment;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import br.com.uol.pagseguro.api.PagSeguroEnv;
 import br.com.uol.pagseguro.api.exception.PagSeguroLibException;
-import br.com.uol.pagseguro.api.utils.logging.Log;
-import br.com.uol.pagseguro.api.utils.logging.LoggerFactory;
+import br.com.uol.pagseguro.api.utils.Loggable;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static br.com.uol.pagseguro.api.environment.PagSeguroGlobalConfig.SYSTEM_PROPERTIES_FILE;
 
@@ -36,35 +35,25 @@ import static br.com.uol.pagseguro.api.environment.PagSeguroGlobalConfig.SYSTEM_
  *
  * @author PagSeguro Internet Ltda.
  */
-public class DefaultEnvironmentProviderChain {
+public class DefaultEnvironmentProviderChain implements Loggable {
 
-  private static final Log LOGGER = LoggerFactory.getLogger(DefaultEnvironmentProviderChain.class);
+    private final List<EnvironmentProvider> environmentProviders = new LinkedList<EnvironmentProvider>();
 
-  private final List<EnvironmentProvider> environmentProviders = new LinkedList<EnvironmentProvider>();
-
-  /**
-   * Constructor
-   */
-  public DefaultEnvironmentProviderChain() {
-    environmentProviders.add(new JVMEnvVariableEnvironmentProvider());
-    environmentProviders.add(new SystemPropEnvironmentProvider(SYSTEM_PROPERTIES_FILE));
-    environmentProviders.add(new SystemEnvVariableEnvironmentProvider());
-  }
-
-  /**
-   * Get configurations environment
-   *
-   * @return Configurations environment
-   */
-  public PagSeguroEnv getEnvironment() {
-    LOGGER.info("Iniciando leitura das configuracoes de ambiente");
-    for (EnvironmentProvider environmentProvider : environmentProviders) {
-      try {
-        return environmentProvider.getEnvironment();
-      } catch (Exception e) {
-      }
+    public DefaultEnvironmentProviderChain() {
+        environmentProviders.add(new JVMEnvVariableEnvironmentProvider());
+        environmentProviders.add(new SystemPropEnvironmentProvider(SYSTEM_PROPERTIES_FILE));
+        environmentProviders.add(new SystemEnvVariableEnvironmentProvider());
     }
-    throw new PagSeguroLibException(new RuntimeException("Can not create PagSeguro Environment " +
-        "from providers"));
-  }
+
+    public PagSeguroEnv getEnvironment() {
+        getLogger().info("Iniciando leitura das configuracoes de ambiente");
+        for (EnvironmentProvider environmentProvider : environmentProviders) {
+            try {
+                return environmentProvider.getEnvironment();
+            } catch (Exception e) {
+                getLogger().error("Erro ao retornar ambiente", e);
+            }
+        }
+        throw new PagSeguroLibException(new RuntimeException("Can not create PagSeguro Environment from providers"));
+    }
 }

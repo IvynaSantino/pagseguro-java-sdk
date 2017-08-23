@@ -20,10 +20,10 @@
  */
 package br.com.uol.pagseguro.api.utils;
 
-import java.io.IOException;
-
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.http.HttpClient;
+
+import java.io.IOException;
 
 /**
  * Interface used to execute searches
@@ -31,15 +31,14 @@ import br.com.uol.pagseguro.api.http.HttpClient;
  * @param <T> Class to be searched
  * @author PagSeguro Internet Ltda.
  */
-public interface PagSeguroCommand<T> {
+public interface PagSeguroCommand<T> extends Loggable {
 
-  /**
-   * Execute the search
-   *
-   * @param pagseguro  Pagseguro instance
-   * @param httpClient Http client
-   * @return Result of the search
-   */
-  T execute(PagSeguro pagseguro, HttpClient httpClient) throws IOException;
-
+    /**
+     * Execute the search
+     *
+     * @param pagseguro  Pagseguro instance
+     * @param httpClient Http client
+     * @return Result of the search
+     */
+    T execute(PagSeguro pagseguro, HttpClient httpClient) throws IOException;
 }
