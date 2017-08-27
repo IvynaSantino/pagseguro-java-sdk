@@ -36,8 +36,8 @@ import br.com.uol.pagseguro.api.transaction.search.TransactionDetail;
 import br.com.uol.pagseguro.api.transaction.search.TransactionDetailXML;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
-import br.com.uol.pagseguro.api.utils.RequestMap;
 import br.com.uol.pagseguro.api.utils.Loggable;
+import br.com.uol.pagseguro.api.utils.RequestMap;
 
 import java.io.IOException;
 
@@ -84,7 +84,7 @@ public class SplitPaymentRegisterResource implements Loggable {
         getLogger().info("Convertendo valores");
 
         final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-        map.putString("payment.method", TransactionMethod.PaymentMethod.BANK_SLIP.getName());
+        map.putString("payment.method", TransactionMethod.BANK_SLIP.getName());
 
         getLogger().info("Valores convertidos");
         final HttpResponse response;
@@ -117,7 +117,7 @@ public class SplitPaymentRegisterResource implements Loggable {
         getLogger().info("Iniciando split de pagamento com cartao de credito");
         getLogger().info("Convertendo valores");
         final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-        map.putString("payment.method", TransactionMethod.PaymentMethod.CREDIT_CARD.getName());
+        map.putString("payment.method", TransactionMethod.CREDIT_CARD.getName());
         map.putMap(CREDIT_CARD_MC.convert(creditCard));
         getLogger().info("Valores convertidos");
         final HttpResponse response;
@@ -162,7 +162,7 @@ public class SplitPaymentRegisterResource implements Loggable {
         getLogger().info("Iniciando split de pagamento com debito online");
         getLogger().info("Convertendo valores");
         final RequestMap map = SPLIT_PAYMENT_REGISTRATION_MC.convert(splitPaymentRegistration);
-        map.putString("payment.method", TransactionMethod.PaymentMethod.ONLINE_DEBIT.getName());
+        map.putString("payment.method", TransactionMethod.ONLINE_DEBIT.getName());
         map.putMap(BANK_MC.convert(bank));
         getLogger().info("Valores convertidos");
 

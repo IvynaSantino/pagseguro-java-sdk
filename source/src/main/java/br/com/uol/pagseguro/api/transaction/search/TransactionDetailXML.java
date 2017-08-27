@@ -20,23 +20,18 @@
  */
 package br.com.uol.pagseguro.api.transaction.search;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import br.com.uol.pagseguro.api.common.domain.Parameter;
 import br.com.uol.pagseguro.api.common.domain.TransactionMethod;
 import br.com.uol.pagseguro.api.common.domain.TransactionStatus;
 import br.com.uol.pagseguro.api.common.domain.TransactionType;
-import br.com.uol.pagseguro.api.common.domain.xml.CreditorFeeXML;
-import br.com.uol.pagseguro.api.common.domain.xml.PaymentItemXML;
-import br.com.uol.pagseguro.api.common.domain.xml.SenderXML;
-import br.com.uol.pagseguro.api.common.domain.xml.ShippingXML;
-import br.com.uol.pagseguro.api.common.domain.xml.TransactionPaymentMethodXML;
+import br.com.uol.pagseguro.api.common.domain.xml.*;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementation of {@code TransactionDetail}
@@ -46,313 +41,313 @@ import br.com.uol.pagseguro.api.common.domain.xml.TransactionPaymentMethodXML;
 @XmlRootElement(name = "transaction")
 public class TransactionDetailXML implements TransactionDetail {
 
-  private String code;
+    private String code;
 
-  private String reference;
+    private String reference;
 
-  private Date date;
+    private Date date;
 
-  private Date lastEvent;
+    private Date lastEvent;
 
-  private Integer typeId;
+    private Integer typeId;
 
-  private Integer statusId;
+    private Integer statusId;
 
-  private SenderXML sender;
+    private SenderXML sender;
 
-  private ShippingXML shipping;
+    private ShippingXML shipping;
 
-  private List<PaymentItemXML> items;
+    private List<PaymentItemXML> items;
 
-  private TransactionPaymentMethodXML paymentMethod;
+    private TransactionPaymentMethodXML paymentMethod;
 
-  private BigDecimal grossAmount;
+    private BigDecimal grossAmount;
 
-  private BigDecimal discountAmount;
+    private BigDecimal discountAmount;
 
-  private BigDecimal netAmount;
+    private BigDecimal netAmount;
 
-  private BigDecimal extraAmount;
+    private BigDecimal extraAmount;
 
-  private String paymentLink;
+    private String paymentLink;
 
-  private BigDecimal feeAmount;
+    private BigDecimal feeAmount;
 
-  private String mode;
+    private String mode;
 
-  private String methodDescription;
+    private String methodDescription;
 
-  private Date escrowEndDate;
+    private Date escrowEndDate;
 
-  private String cancellationSource;
+    private String cancellationSource;
 
-  private CreditorFeeXML creditorFees;
+    private CreditorFeeXML creditorFees;
 
-  private Integer installmentCount;
+    private Integer installmentCount;
 
-  TransactionDetailXML() {
-  }
+    TransactionDetailXML() {
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  @Override
-  public List<? extends Parameter> getParameters() {
-    return null;
-  }
+    @Override
+    public List<? extends Parameter> getParameters() {
+        return null;
+    }
 
-  @XmlElement
-  public void setCode(String code) {
-    this.code = code;
-  }
+    @XmlElement
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  @Override
-  public String getReference() {
-    return reference;
-  }
+    @Override
+    public String getReference() {
+        return reference;
+    }
 
-  @XmlElement
-  public void setReference(String reference) {
-    this.reference = reference;
-  }
+    @XmlElement
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
-  @Override
-  public Date getDate() {
-    return date;
-  }
+    @Override
+    public Date getDate() {
+        return date;
+    }
 
-  @XmlElement
-  public void setDate(Date date) {
-    this.date = date;
-  }
+    @XmlElement
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-  @Override
-  public Date getLastEvent() {
-    return lastEvent;
-  }
+    @Override
+    public Date getLastEvent() {
+        return lastEvent;
+    }
 
-  @XmlElement(name = "lastEventDate")
-  public void setLastEvent(Date lastEvent) {
-    this.lastEvent = lastEvent;
-  }
+    @XmlElement(name = "lastEventDate")
+    public void setLastEvent(Date lastEvent) {
+        this.lastEvent = lastEvent;
+    }
 
-  public Integer getStatusId() {
-    return statusId;
-  }
+    public Integer getStatusId() {
+        return statusId;
+    }
 
-  @XmlElement(name = "status")
-  public void setStatusId(Integer statusId) {
-    this.statusId = statusId;
-  }
+    @XmlElement(name = "status")
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
 
-  @Override
-  public TransactionStatus getStatus() {
-    return new TransactionStatus(getStatusId());
-  }
-
-  public Integer getTypeId() {
-    return typeId;
-  }
-
-  @XmlElement(name = "type")
-  public void setTypeId(Integer typeId) {
-    this.typeId = typeId;
-  }
-
-  @Override
-  public TransactionType getType() {
-    return new TransactionType(getTypeId());
-  }
-
-  @XmlElement
-  public void setSender(SenderXML sender) {
-    this.sender = sender;
-  }
-
-  @Override
-  public SenderXML getSender() {
-    return sender;
-  }
-
-  @XmlElement(name = "item")
-  @XmlElementWrapper(name = "items")
-  public void setItems(List<PaymentItemXML> items) {
-    this.items = items;
-  }
-
-  @Override
-  public List<PaymentItemXML> getItems() {
-    return items;
-  }
-
-  @XmlElement
-  public void setShipping(ShippingXML shipping) {
-    this.shipping = shipping;
-  }
-
-  @Override
-  public ShippingXML getShipping() {
-    return shipping;
-  }
-
-  @XmlElement
-  public void setPaymentMethod(TransactionPaymentMethodXML paymentMethod) {
-    this.paymentMethod = paymentMethod;
-  }
-
-  @Override
-  public TransactionPaymentMethodXML getPaymentMethod() {
-    return paymentMethod;
-  }
-
-  @XmlElement
-  public void setExtraAmount(BigDecimal extraAmount) {
-    this.extraAmount = extraAmount;
-  }
-
-  @Override
-  public BigDecimal getExtraAmount() {
-    return extraAmount;
-  }
-
-  @XmlElement
-  public void setNetAmount(BigDecimal netAmount) {
-    this.netAmount = netAmount;
-  }
-
-  @Override
-  public BigDecimal getNetAmount() {
-    return netAmount;
-  }
-
-  @XmlElement
-  public void setGrossAmount(BigDecimal grossAmount) {
-    this.grossAmount = grossAmount;
-  }
-
-  @Override
-  public BigDecimal getGrossAmount() {
-    return grossAmount;
-  }
-
-  @XmlElement
-  public void setDiscountAmount(BigDecimal discountAmount) {
-    this.discountAmount = discountAmount;
-  }
-
-  @Override
-  public BigDecimal getDiscountAmount() {
-    return discountAmount;
-  }
-
-  @XmlElement
-  public void setPaymentLink(String paymentLink) {
-    this.paymentLink = paymentLink;
-  }
-
-  @Override
-  public String getPaymentLink() {
-    return paymentLink;
-  }
-
-  @Override
-  public BigDecimal getFeeAmount() {
-    return feeAmount;
-  }
-
-  @XmlElement
-  public void setFeeAmount(BigDecimal feeAmount) {
-    this.feeAmount = feeAmount;
-  }
-
-  @Override
-  public String getMode() {
-    return mode;
-  }
-
-  @XmlElement
-  public void setMode(String mode) {
-    this.mode = mode;
-  }
-
-  @Override
-  public TransactionMethod getMethod() {
-    return methodDescription != null ? new TransactionMethod(methodDescription) : null;
-  }
-
-  public String getMethodDescription() {
-    return methodDescription;
-  }
-
-  @XmlElement(name = "method")
-  public void setMethodDescription(String methodDescription) {
-    this.methodDescription = methodDescription;
-  }
-
-  @Override
-  public Date getEscrowEndDate() {
-    return escrowEndDate;
-  }
-
-  @XmlElement
-  public void setEscrowEndDate(Date escrowEndDate) {
-    this.escrowEndDate = escrowEndDate;
-  }
-
-  @Override
-  public String getCancellationSource() {
-    return cancellationSource;
-  }
-
-  @XmlElement
-  public void setCancellationSource(String cancellationSource) {
-    this.cancellationSource = cancellationSource;
-  }
-
-  public CreditorFeeXML getCreditorFees() {
-    return creditorFees;
-  }
-
-  @XmlElement
-  public void setCreditorFees(CreditorFeeXML creditorFees) {
-    this.creditorFees = creditorFees;
-  }
-
-  @Override
-  public Integer getInstallmentCount() {
-    return installmentCount;
-  }
-
-  public void setInstallmentCount(Integer installmentCount) {
-    this.installmentCount = installmentCount;
-  }
-
-  @Override
-  public String toString() {
-    return "TransactionDetailXML{" +
-        "code='" + code + '\'' +
-        ", reference='" + reference + '\'' +
-        ", date=" + date +
-        ", lastEvent=" + lastEvent +
-        ", typeId=" + typeId +
-        ", statusId=" + statusId +
-        ", sender=" + sender +
-        ", shipping=" + shipping +
-        ", items=" + items +
-        ", paymentMethod=" + paymentMethod +
-        ", grossAmount=" + grossAmount +
-        ", discountAmount=" + discountAmount +
-        ", netAmount=" + netAmount +
-        ", extraAmount=" + extraAmount +
-        ", paymentLink='" + paymentLink + '\'' +
-        ", feeAmount=" + feeAmount +
-        ", mode='" + mode + '\'' +
-        ", methodDescription='" + methodDescription + '\'' +
-        ", escrowEndDate=" + escrowEndDate +
-        ", cancellationSource='" + cancellationSource + '\'' +
-        ", creditorFeeXML=" + creditorFees +
-        ", installmentCount=" + installmentCount +
-        '}';
-  }
+    @Override
+    public TransactionStatus getStatus() {
+        return new TransactionStatus(getStatusId());
+    }
+
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    @XmlElement(name = "type")
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    @Override
+    public TransactionType getType() {
+        return new TransactionType(getTypeId());
+    }
+
+    @XmlElement
+    public void setSender(SenderXML sender) {
+        this.sender = sender;
+    }
+
+    @Override
+    public SenderXML getSender() {
+        return sender;
+    }
+
+    @XmlElement(name = "item")
+    @XmlElementWrapper(name = "items")
+    public void setItems(List<PaymentItemXML> items) {
+        this.items = items;
+    }
+
+    @Override
+    public List<PaymentItemXML> getItems() {
+        return items;
+    }
+
+    @XmlElement
+    public void setShipping(ShippingXML shipping) {
+        this.shipping = shipping;
+    }
+
+    @Override
+    public ShippingXML getShipping() {
+        return shipping;
+    }
+
+    @XmlElement
+    public void setPaymentMethod(TransactionPaymentMethodXML paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    @Override
+    public TransactionPaymentMethodXML getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    @XmlElement
+    public void setExtraAmount(BigDecimal extraAmount) {
+        this.extraAmount = extraAmount;
+    }
+
+    @Override
+    public BigDecimal getExtraAmount() {
+        return extraAmount;
+    }
+
+    @XmlElement
+    public void setNetAmount(BigDecimal netAmount) {
+        this.netAmount = netAmount;
+    }
+
+    @Override
+    public BigDecimal getNetAmount() {
+        return netAmount;
+    }
+
+    @XmlElement
+    public void setGrossAmount(BigDecimal grossAmount) {
+        this.grossAmount = grossAmount;
+    }
+
+    @Override
+    public BigDecimal getGrossAmount() {
+        return grossAmount;
+    }
+
+    @XmlElement
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    @Override
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    @XmlElement
+    public void setPaymentLink(String paymentLink) {
+        this.paymentLink = paymentLink;
+    }
+
+    @Override
+    public String getPaymentLink() {
+        return paymentLink;
+    }
+
+    @Override
+    public BigDecimal getFeeAmount() {
+        return feeAmount;
+    }
+
+    @XmlElement
+    public void setFeeAmount(BigDecimal feeAmount) {
+        this.feeAmount = feeAmount;
+    }
+
+    @Override
+    public String getMode() {
+        return mode;
+    }
+
+    @XmlElement
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    @Override
+    public TransactionMethod getMethod() {
+        return TransactionMethod.fromName(this.methodDescription);
+    }
+
+    public String getMethodDescription() {
+        return methodDescription;
+    }
+
+    @XmlElement(name = "method")
+    public void setMethodDescription(String methodDescription) {
+        this.methodDescription = methodDescription;
+    }
+
+    @Override
+    public Date getEscrowEndDate() {
+        return escrowEndDate;
+    }
+
+    @XmlElement
+    public void setEscrowEndDate(Date escrowEndDate) {
+        this.escrowEndDate = escrowEndDate;
+    }
+
+    @Override
+    public String getCancellationSource() {
+        return cancellationSource;
+    }
+
+    @XmlElement
+    public void setCancellationSource(String cancellationSource) {
+        this.cancellationSource = cancellationSource;
+    }
+
+    public CreditorFeeXML getCreditorFees() {
+        return creditorFees;
+    }
+
+    @XmlElement
+    public void setCreditorFees(CreditorFeeXML creditorFees) {
+        this.creditorFees = creditorFees;
+    }
+
+    @Override
+    public Integer getInstallmentCount() {
+        return installmentCount;
+    }
+
+    public void setInstallmentCount(Integer installmentCount) {
+        this.installmentCount = installmentCount;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionDetailXML{" +
+                "code='" + code + '\'' +
+                ", reference='" + reference + '\'' +
+                ", date=" + date +
+                ", lastEvent=" + lastEvent +
+                ", typeId=" + typeId +
+                ", statusId=" + statusId +
+                ", sender=" + sender +
+                ", shipping=" + shipping +
+                ", items=" + items +
+                ", paymentMethod=" + paymentMethod +
+                ", grossAmount=" + grossAmount +
+                ", discountAmount=" + discountAmount +
+                ", netAmount=" + netAmount +
+                ", extraAmount=" + extraAmount +
+                ", paymentLink='" + paymentLink + '\'' +
+                ", feeAmount=" + feeAmount +
+                ", mode='" + mode + '\'' +
+                ", methodDescription='" + methodDescription + '\'' +
+                ", escrowEndDate=" + escrowEndDate +
+                ", cancellationSource='" + cancellationSource + '\'' +
+                ", creditorFeeXML=" + creditorFees +
+                ", installmentCount=" + installmentCount +
+                '}';
+    }
 }

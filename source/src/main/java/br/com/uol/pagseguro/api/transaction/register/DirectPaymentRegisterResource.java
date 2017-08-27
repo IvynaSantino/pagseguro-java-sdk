@@ -36,8 +36,8 @@ import br.com.uol.pagseguro.api.transaction.search.TransactionDetail;
 import br.com.uol.pagseguro.api.transaction.search.TransactionDetailXML;
 import br.com.uol.pagseguro.api.utils.Builder;
 import br.com.uol.pagseguro.api.utils.CharSet;
-import br.com.uol.pagseguro.api.utils.RequestMap;
 import br.com.uol.pagseguro.api.utils.Loggable;
+import br.com.uol.pagseguro.api.utils.RequestMap;
 
 import java.io.IOException;
 
@@ -52,7 +52,6 @@ import java.io.IOException;
 public class DirectPaymentRegisterResource implements Loggable {
 
     private static final CreditCardV2MapConverter CREDIT_CARD_MC = new CreditCardV2MapConverter();
-    //private static final TransactionRegistrationV2MapConverter TRANSACTION_REGISTRATION_MC = new TransactionRegistrationV2MapConverter();
     private static final DirectPaymentRegistrationV2MapConverter DIRECT_PAYMENT_REGISTRATION_MC = new DirectPaymentRegistrationV2MapConverter();
     private static final BankV2MapConverter BANK_MC = new BankV2MapConverter();
 
@@ -67,9 +66,7 @@ public class DirectPaymentRegisterResource implements Loggable {
      * @param httpClient                Http Client
      * @param directPaymentRegistration Interface with the attributes of Direct Payment Registration.
      */
-    public DirectPaymentRegisterResource(PagSeguro pagSeguro,
-                                         HttpClient httpClient,
-                                         DirectPaymentRegistration directPaymentRegistration) {
+    public DirectPaymentRegisterResource(PagSeguro pagSeguro, HttpClient httpClient, DirectPaymentRegistration directPaymentRegistration) {
         this.pagSeguro = pagSeguro;
         this.httpClient = httpClient;
         this.directPaymentRegistration = directPaymentRegistration;
@@ -82,26 +79,24 @@ public class DirectPaymentRegisterResource implements Loggable {
      * @see TransactionDetail
      */
     public TransactionDetail withBankSlip() {
-        getLogger().info("Iniciando pagamento direto com boleto");
-        getLogger().info("Convertendo valores");
+        getLogger().debug("Iniciando pagamento direto com boleto");
+        getLogger().debug("Convertendo valores");
         final RequestMap map = DIRECT_PAYMENT_REGISTRATION_MC.convert(directPaymentRegistration);
-        map.putString("paymentMethod", TransactionMethod.PaymentMethod.BANK_SLIP.getName());
-        getLogger().info("Valores convertidos");
+        map.putString("paymentMethod", TransactionMethod.BANK_SLIP.getName());
+        getLogger().debug("Valores convertidos");
         final HttpResponse response;
         try {
             getLogger().debug(String.format("Parametros: %s", map));
-            response = httpClient.execute(HttpMethod.POST,
-                    String.format(Endpoints.DIRECT_PAYMENT, pagSeguro.getHost()), null,
-                    map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.DIRECT_PAYMENT, pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
             getLogger().debug(String.format("Resposta: %s", response.toString()));
         } catch (IOException e) {
             getLogger().error("Erro ao executar pagamento direto com boleto");
             throw new PagSeguroLibException(e);
         }
-        getLogger().info("Parseando XML de resposta");
+        getLogger().debug("Parseando XML de resposta");
         TransactionDetail transaction = response.parseXMLContent(pagSeguro, TransactionDetailXML.class);
-        getLogger().info("Parseamento finalizado");
-        getLogger().info("Pagamento direto com boleto finalizado");
+        getLogger().debug("Parseamento finalizado");
+        getLogger().debug("Pagamento direto com boleto finalizado");
         return transaction;
     }
 
@@ -117,7 +112,7 @@ public class DirectPaymentRegisterResource implements Loggable {
         getLogger().info("Iniciando pagamento direto com cartao de credito");
         getLogger().info("Convertendo valores");
         final RequestMap map = DIRECT_PAYMENT_REGISTRATION_MC.convert(directPaymentRegistration);
-        map.putString("paymentMethod", TransactionMethod.PaymentMethod.CREDIT_CARD.getName());
+        map.putString("paymentMethod", TransactionMethod.CREDIT_CARD.getName());
         map.putMap(CREDIT_CARD_MC.convert(creditCard));
         getLogger().info("Valores convertidos");
         final HttpResponse response;
@@ -162,7 +157,7 @@ public class DirectPaymentRegisterResource implements Loggable {
         getLogger().info("Iniciando pagamento direto com cartao de credito internacional");
         getLogger().info("Convertendo valores");
         final RequestMap map = DIRECT_PAYMENT_REGISTRATION_MC.convert(directPaymentRegistration);
-        map.putString("paymentMethod", TransactionMethod.PaymentMethod.CREDIT_CARD.getName());
+        map.putString("paymentMethod", TransactionMethod.CREDIT_CARD.getName());
         map.putMap(CREDIT_CARD_MC.convert(internationalCreditCard));
         getLogger().info("Valores convertidos");
         final HttpResponse response;
@@ -220,15 +215,13 @@ public class DirectPaymentRegisterResource implements Loggable {
         getLogger().info("Iniciando pagamento direto com debito online");
         getLogger().info("Convertendo valores");
         final RequestMap map = DIRECT_PAYMENT_REGISTRATION_MC.convert(directPaymentRegistration);
-        map.putString("paymentMethod", TransactionMethod.PaymentMethod.ONLINE_DEBIT.getName());
+        map.putString("paymentMethod", TransactionMethod.ONLINE_DEBIT.getName());
         map.putMap(BANK_MC.convert(bank));
         getLogger().info("Valores convertidos");
         final HttpResponse response;
         try {
             getLogger().debug(String.format("Parametros: %s", map));
-            response = httpClient.execute(HttpMethod.POST,
-                    String.format(Endpoints.DIRECT_PAYMENT, pagSeguro.getHost()), null,
-                    map.toHttpRequestBody(CharSet.ENCODING_ISO));
+            response = httpClient.execute(HttpMethod.POST, String.format(Endpoints.DIRECT_PAYMENT, pagSeguro.getHost()), null, map.toHttpRequestBody(CharSet.ENCODING_ISO));
             getLogger().debug(String.format("Resposta: %s", response.toString()));
         } catch (IOException e) {
             getLogger().error("Erro ao executar pagamento direto com debito online");
@@ -240,5 +233,4 @@ public class DirectPaymentRegisterResource implements Loggable {
         getLogger().info("Pagamento direto com debito online finalizado");
         return transaction;
     }
-
 }

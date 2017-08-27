@@ -20,19 +20,12 @@
  */
 package br.com.uol.pagseguro.api.transaction.search;
 
+import br.com.uol.pagseguro.api.common.domain.*;
+import br.com.uol.pagseguro.api.transaction.TransactionIdentify;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import br.com.uol.pagseguro.api.common.domain.CreditorFee;
-import br.com.uol.pagseguro.api.common.domain.PaymentItem;
-import br.com.uol.pagseguro.api.common.domain.Sender;
-import br.com.uol.pagseguro.api.common.domain.Shipping;
-import br.com.uol.pagseguro.api.common.domain.TransactionMethod;
-import br.com.uol.pagseguro.api.common.domain.TransactionPaymentMethod;
-import br.com.uol.pagseguro.api.common.domain.TransactionStatus;
-import br.com.uol.pagseguro.api.common.domain.TransactionType;
-import br.com.uol.pagseguro.api.transaction.TransactionIdentify;
 
 /**
  * Interface for transaction detail response
@@ -173,7 +166,6 @@ public interface TransactionDetail extends TransactionIdentify {
    * Transaction method
    *
    * @return Transaction method
-   * @see TransactionMethod
    */
   TransactionMethod getMethod();
 
