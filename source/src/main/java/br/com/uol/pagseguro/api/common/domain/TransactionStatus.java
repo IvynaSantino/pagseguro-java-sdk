@@ -25,109 +25,33 @@ package br.com.uol.pagseguro.api.common.domain;
  *
  * @author PagSeguro Internet Ltda.
  */
-public class TransactionStatus {
+public enum TransactionStatus {
 
-  private final Integer statusId;
-
-  /**
-   * Constructor
-   *
-   * @param statusId Status id
-   */
-  public TransactionStatus(Integer statusId) {
-    this.statusId = statusId;
-  }
-
-  /**
-   * Get status id
-   *
-   * @return Status id
-   */
-  public int getStatusId() {
-    return statusId;
-  }
-
-  /**
-   * Get status by status id
-   *
-   * @return Status
-   * @see Status
-   */
-  public Status getStatus() {
-    return Status.fromStatusId(statusId);
-  }
-
-  /**
-   * Status enum
-   */
-  public enum Status {
-
-    /**
-     * WAITING PAYMENT
-     */
     WAITING_PAYMENT(1),
-
-    /**
-     * IN REVIEW
-     */
     IN_REVIEW(2),
-
-    /**
-     * APPROVED
-     */
     APPROVED(3),
-
-    /**
-     * AVAILABLE
-     */
     AVAILABLE(4),
-
-    /**
-     * IN DISPUTE
-     */
     IN_DISPUTE(5),
-
-    /**
-     * RETURNED
-     */
     RETURNED(6),
-
-    /**
-     * CANCELLED
-     */
     CANCELLED(7),
-
-    /**
-     * UNRECOGNIZED
-     */
     UNRECOGNIZED(null);
 
     private Integer statusId;
 
-    /**
-     * Constructor
-     *
-     * @param statusId Status id
-     */
-    Status(Integer statusId) {
-      this.statusId = statusId;
+    TransactionStatus(Integer statusId) {
+        this.statusId = statusId;
     }
 
-    /**
-     * Get status by status id
-     *
-     * @param statusId Status id
-     * @return Status
-     */
-    public static Status fromStatusId(Integer statusId) {
-      for (Status status : Status.values()) {
-        if (status.statusId != null && status.statusId == statusId) {
-          return status;
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public static TransactionStatus fromStatusId(Integer statusId) {
+        for (TransactionStatus status : TransactionStatus.values()) {
+            if (status.statusId != null && status.statusId == statusId) {
+                return status;
+            }
         }
-      }
-      return UNRECOGNIZED;
+        return UNRECOGNIZED;
     }
-
-  }
-
 }

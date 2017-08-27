@@ -143,7 +143,7 @@ public class TransactionDetailXML implements TransactionDetail {
 
     @Override
     public TransactionStatus getStatus() {
-        return new TransactionStatus(getStatusId());
+        return TransactionStatus.fromStatusId(getStatusId());
     }
 
     public Integer getTypeId() {

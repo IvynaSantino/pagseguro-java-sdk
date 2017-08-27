@@ -21,19 +21,18 @@
 
 package br.com.uol.pagseguro.api.transaction.search;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElement;
-
 import br.com.uol.pagseguro.api.PagSeguro;
 import br.com.uol.pagseguro.api.common.domain.Parameter;
 import br.com.uol.pagseguro.api.common.domain.TransactionStatus;
 import br.com.uol.pagseguro.api.common.domain.TransactionType;
 import br.com.uol.pagseguro.api.common.domain.xml.TransactionPaymentMethodXML;
 import br.com.uol.pagseguro.api.utils.XMLUnmarshallListener;
+
+import javax.xml.bind.annotation.XmlElement;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implementation of {@code TransactionSummary} and {@code XMLUnmarshallListener}
@@ -42,185 +41,185 @@ import br.com.uol.pagseguro.api.utils.XMLUnmarshallListener;
  */
 public class TransactionSummaryXML implements TransactionSummary, XMLUnmarshallListener {
 
-  private Date date;
+    private Date date;
 
-  private String reference;
+    private String reference;
 
-  private String code;
+    private String code;
 
-  private Integer typeId;
+    private Integer typeId;
 
-  private Integer statusId;
+    private Integer statusId;
 
-  private TransactionPaymentMethodXML paymentMethod;
+    private TransactionPaymentMethodXML paymentMethod;
 
-  private BigDecimal grossAmount;
+    private BigDecimal grossAmount;
 
-  private BigDecimal discountAmount;
+    private BigDecimal discountAmount;
 
-  private BigDecimal feeAmount;
+    private BigDecimal feeAmount;
 
-  private BigDecimal netAmount;
+    private BigDecimal netAmount;
 
-  private BigDecimal extraAmount;
+    private BigDecimal extraAmount;
 
-  private Date lastEvent;
+    private Date lastEvent;
 
-  private PagSeguro pagseguro;
+    private PagSeguro pagseguro;
 
-  TransactionSummaryXML() {
-  }
+    TransactionSummaryXML() {
+    }
 
-  public Date getDate() {
-    return date;
-  }
+    public Date getDate() {
+        return date;
+    }
 
-  @XmlElement
-  public void setDate(Date date) {
-    this.date = date;
-  }
+    @XmlElement
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-  public String getReference() {
-    return reference;
-  }
+    public String getReference() {
+        return reference;
+    }
 
-  @XmlElement
-  public void setReference(String reference) {
-    this.reference = reference;
-  }
+    @XmlElement
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  @Override
-  public List<? extends Parameter> getParameters() {
-    return new ArrayList<Parameter>();
-  }
+    @Override
+    public List<? extends Parameter> getParameters() {
+        return new ArrayList<Parameter>();
+    }
 
-  @XmlElement
-  public void setCode(String code) {
-    this.code = code;
-  }
+    @XmlElement
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public Integer getTypeId() {
-    return typeId;
-  }
+    public Integer getTypeId() {
+        return typeId;
+    }
 
-  @XmlElement(name = "type")
-  public void setTypeId(Integer typeId) {
-    this.typeId = typeId;
-  }
+    @XmlElement(name = "type")
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
 
-  public Integer getStatusId() {
-    return statusId;
-  }
+    public Integer getStatusId() {
+        return statusId;
+    }
 
-  @XmlElement
-  public void setPaymentMethod(TransactionPaymentMethodXML paymentMethod) {
-    this.paymentMethod = paymentMethod;
-  }
+    @XmlElement
+    public void setPaymentMethod(TransactionPaymentMethodXML paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 
-  @Override
-  public TransactionPaymentMethodXML getPaymentMethod() {
-    return paymentMethod;
-  }
+    @Override
+    public TransactionPaymentMethodXML getPaymentMethod() {
+        return paymentMethod;
+    }
 
-  @Override
-  public TransactionType getType() {
-    return new TransactionType(getTypeId());
-  }
+    @Override
+    public TransactionType getType() {
+        return new TransactionType(getTypeId());
+    }
 
-  @XmlElement(name = "status")
-  public void setStatusId(Integer statusId) {
-    this.statusId = statusId;
-  }
+    @XmlElement(name = "status")
+    public void setStatusId(Integer statusId) {
+        this.statusId = statusId;
+    }
 
-  @Override
-  public TransactionStatus getStatus() {
-    return new TransactionStatus(getStatusId());
-  }
+    @Override
+    public TransactionStatus getStatus() {
+        return TransactionStatus.fromStatusId(getStatusId());
+    }
 
-  public BigDecimal getGrossAmount() {
-    return grossAmount;
-  }
+    public BigDecimal getGrossAmount() {
+        return grossAmount;
+    }
 
-  @XmlElement
-  public void setGrossAmount(BigDecimal grossAmount) {
-    this.grossAmount = grossAmount;
-  }
+    @XmlElement
+    public void setGrossAmount(BigDecimal grossAmount) {
+        this.grossAmount = grossAmount;
+    }
 
-  public BigDecimal getDiscountAmount() {
-    return discountAmount;
-  }
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
 
-  @XmlElement
-  public void setDiscountAmount(BigDecimal discountAmount) {
-    this.discountAmount = discountAmount;
-  }
+    @XmlElement
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
 
-  public BigDecimal getFeeAmount() {
-    return feeAmount;
-  }
+    public BigDecimal getFeeAmount() {
+        return feeAmount;
+    }
 
-  @XmlElement
-  public void setFeeAmount(BigDecimal feeAmount) {
-    this.feeAmount = feeAmount;
-  }
+    @XmlElement
+    public void setFeeAmount(BigDecimal feeAmount) {
+        this.feeAmount = feeAmount;
+    }
 
-  public BigDecimal getNetAmount() {
-    return netAmount;
-  }
+    public BigDecimal getNetAmount() {
+        return netAmount;
+    }
 
-  @XmlElement
-  public void setNetAmount(BigDecimal netAmount) {
-    this.netAmount = netAmount;
-  }
+    @XmlElement
+    public void setNetAmount(BigDecimal netAmount) {
+        this.netAmount = netAmount;
+    }
 
-  public BigDecimal getExtraAmount() {
-    return extraAmount;
-  }
+    public BigDecimal getExtraAmount() {
+        return extraAmount;
+    }
 
-  @XmlElement
-  public void setExtraAmount(BigDecimal extraAmount) {
-    this.extraAmount = extraAmount;
-  }
+    @XmlElement
+    public void setExtraAmount(BigDecimal extraAmount) {
+        this.extraAmount = extraAmount;
+    }
 
-  public Date getLastEvent() {
-    return lastEvent;
-  }
+    public Date getLastEvent() {
+        return lastEvent;
+    }
 
-  @XmlElement(name = "lastEventDate")
-  public void setLastEvent(Date lastEvent) {
-    this.lastEvent = lastEvent;
-  }
+    @XmlElement(name = "lastEventDate")
+    public void setLastEvent(Date lastEvent) {
+        this.lastEvent = lastEvent;
+    }
 
-  @Override
-  public TransactionDetail getDetail() {
-    return pagseguro.transactions().search().byCode(getCode());
-  }
+    @Override
+    public TransactionDetail getDetail() {
+        return pagseguro.transactions().search().byCode(getCode());
+    }
 
-  @Override
-  public void onUnmarshal(PagSeguro pagseguro, String rawData) {
-    this.pagseguro = pagseguro;
-  }
+    @Override
+    public void onUnmarshal(PagSeguro pagseguro, String rawData) {
+        this.pagseguro = pagseguro;
+    }
 
-  @Override
-  public String toString() {
-    return "TransactionSummaryXML{" +
-        "date=" + date +
-        ", reference='" + reference + '\'' +
-        ", code='" + code + '\'' +
-        ", typeId=" + typeId +
-        ", statusId=" + statusId +
-        ", paymentMethod=" + paymentMethod +
-        ", grossAmount=" + grossAmount +
-        ", discountAmount=" + discountAmount +
-        ", feeAmount=" + feeAmount +
-        ", netAmount=" + netAmount +
-        ", extraAmount=" + extraAmount +
-        ", lastEvent=" + lastEvent +
-        ", pagseguro=" + pagseguro +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "TransactionSummaryXML{" +
+                "date=" + date +
+                ", reference='" + reference + '\'' +
+                ", code='" + code + '\'' +
+                ", typeId=" + typeId +
+                ", statusId=" + statusId +
+                ", paymentMethod=" + paymentMethod +
+                ", grossAmount=" + grossAmount +
+                ", discountAmount=" + discountAmount +
+                ", feeAmount=" + feeAmount +
+                ", netAmount=" + netAmount +
+                ", extraAmount=" + extraAmount +
+                ", lastEvent=" + lastEvent +
+                ", pagseguro=" + pagseguro +
+                '}';
+    }
 }
