@@ -41,7 +41,8 @@ public class SessionResourceTest extends Resource4Test {
             "</session>";
   }
 
-  @Test
+  @SuppressWarnings("unchecked")
+@Test
   public void shouldCreateSellerSession() throws IOException {
     HttpResponse response = new HttpResponse(200, responseAsString);
     when(httpClient.execute(any(HttpMethod.class), anyString(), anyMap(),
@@ -53,7 +54,8 @@ public class SessionResourceTest extends Resource4Test {
 
   }
 
-  @Test
+  @SuppressWarnings("unchecked")
+@Test
   public void shouldBeCreateApplicationSession() throws IOException {
 
     HttpResponse response = new HttpResponse(200, responseAsString);
@@ -65,9 +67,9 @@ public class SessionResourceTest extends Resource4Test {
     assertEquals(createdSession.getId(), "d8ebd56d32444161852eeb33a6112df6");
   }
 
-  @Test(expected = PagSeguroUnauthorizedException.class)
+  @SuppressWarnings("unchecked")
+@Test(expected = PagSeguroUnauthorizedException.class)
   public void shouldThrowsUnauthorizedWhenCreateApplication() throws IOException {
-    HttpResponse response = new HttpResponse(401, responseAsString);
     when(httpClient.execute(any(HttpMethod.class), anyString(), anyMap(),
         any(HttpRequestBody.class))).thenThrow(PagSeguroUnauthorizedException.class);
 
@@ -75,9 +77,9 @@ public class SessionResourceTest extends Resource4Test {
 
   }
 
-  @Test(expected = PagSeguroUnauthorizedException.class)
+  @SuppressWarnings("unchecked")
+@Test(expected = PagSeguroUnauthorizedException.class)
   public void shouldThrowsUnauthorizedWhenCreateSeller() throws IOException {
-    HttpResponse response = new HttpResponse(401, responseAsString);
     when(httpClient.execute(any(HttpMethod.class), anyString(), anyMap(),
         any(HttpRequestBody.class))).thenThrow(PagSeguroUnauthorizedException.class);
 
@@ -85,7 +87,8 @@ public class SessionResourceTest extends Resource4Test {
 
   }
 
-  @Test(expected = PagSeguroLibException.class)
+  @SuppressWarnings("unchecked")
+@Test(expected = PagSeguroLibException.class)
   public void shouldThrowsErrorLib() throws Exception {
     when(httpClient.execute(any(HttpMethod.class), anyString(), anyMap(),
         any(HttpRequestBody.class))).thenThrow(new IOException());
