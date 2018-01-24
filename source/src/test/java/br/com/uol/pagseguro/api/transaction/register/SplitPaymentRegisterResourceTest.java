@@ -301,7 +301,7 @@ public class SplitPaymentRegisterResourceTest extends Resource4Test {
     assertEquals("comprador@uol.com.br", transactionDetail.getSender().getEmail());
     assertEquals("99", transactionDetail.getSender().getPhone().getAreaCode());
     assertEquals("99999999", transactionDetail.getSender().getPhone().getNumber());
-    assertEquals(new BigDecimal(0.40).setScale(2, RoundingMode.HALF_EVEN), transactionDetail.getCreditorFees().getIntermediationRateAmount());
+    assertEquals(BigDecimal.valueOf(0.40).setScale(2, RoundingMode.HALF_EVEN), transactionDetail.getCreditorFees().getIntermediationRateAmount());
     assertEquals(new BigDecimal(0.80).setScale(2, RoundingMode.HALF_EVEN), transactionDetail.getCreditorFees().getIntermediationFeeAmount());
 
   }
