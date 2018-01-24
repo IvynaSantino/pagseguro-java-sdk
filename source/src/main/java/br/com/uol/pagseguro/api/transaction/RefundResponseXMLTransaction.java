@@ -32,36 +32,44 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlRootElement(name = "result")
 public class RefundResponseXMLTransaction {
 
-  private String result;
+	private String result;
 
-  RefundResponseXMLTransaction() {
-  }
+	RefundResponseXMLTransaction() {
+	}
 
-  public String getResult() {
-    return result;
-  }
+	public String getResult() {
+		return result;
+	}
 
-  @XmlValue
-  public void setResult(String result) {
-    this.result = result;
-  }
+	@XmlValue
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-  @Override
-  public String toString() {
-    return "RefundResponseXMLTransaction{" +
-           "result='" + result + '\'' +
-           '}';
-  }
+	@Override
+	public String toString() {
+		return "RefundResponseXMLTransaction{" + "result='" + result + '\'' + '}';
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof RefundResponseXMLTransaction)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof RefundResponseXMLTransaction))
+			return false;
 
-    RefundResponseXMLTransaction that = (RefundResponseXMLTransaction) o;
+		RefundResponseXMLTransaction that = (RefundResponseXMLTransaction) o;
 
-    return result != null ? result.equals(that.result) : that.result == null;
+		return result != null ? result.equals(that.result) : that.result == null;
 
-  }
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
+		return result;
+	}
 
 }

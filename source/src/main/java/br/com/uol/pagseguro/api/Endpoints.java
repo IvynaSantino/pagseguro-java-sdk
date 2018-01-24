@@ -28,6 +28,7 @@ package br.com.uol.pagseguro.api;
 public final class Endpoints {
 
   Endpoints() {
+    new IllegalStateException();
   }
 
   /**

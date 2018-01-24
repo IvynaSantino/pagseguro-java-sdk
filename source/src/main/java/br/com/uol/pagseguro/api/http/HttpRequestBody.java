@@ -27,84 +27,98 @@ package br.com.uol.pagseguro.api.http;
  */
 public class HttpRequestBody {
 
-  private final String content;
+	private final String content;
 
-  private final String charset;
+	private final String charset;
 
-  private final String contentType;
+	private final String contentType;
 
-  /**
-   * Constructor
-   *
-   * @param contentType Content type
-   * @param content     Content
-   * @param charset     Encoding
-   */
-  public HttpRequestBody(String contentType, String content, String charset) {
-    if (content == null || contentType == null || charset == null) {
-      throw new IllegalArgumentException();
-    }
-    this.content = content;
-    this.charset = charset;
-    this.contentType = contentType;
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param contentType
+	 *            Content type
+	 * @param content
+	 *            Content
+	 * @param charset
+	 *            Encoding
+	 */
+	public HttpRequestBody(String contentType, String content, String charset) {
+		if (content == null || contentType == null || charset == null) {
+			throw new IllegalArgumentException();
+		}
+		this.content = content;
+		this.charset = charset;
+		this.contentType = contentType;
+	}
 
-  /**
-   * Get content
-   *
-   * @return Content
-   */
-  public String getContent() {
-    return content;
-  }
+	/**
+	 * Get content
+	 *
+	 * @return Content
+	 */
+	public String getContent() {
+		return content;
+	}
 
-  /**
-   * Get content type with charset
-   *
-   * @return Content type with charset
-   */
-  public String getContentTypeWithCharset() {
-    return getContentType() + "; charset=" + getCharset();
-  }
+	/**
+	 * Get content type with charset
+	 *
+	 * @return Content type with charset
+	 */
+	public String getContentTypeWithCharset() {
+		return getContentType() + "; charset=" + getCharset();
+	}
 
-  /**
-   * Get content type
-   *
-   * @return Content type
-   */
-  public String getContentType() {
-    return contentType;
-  }
+	/**
+	 * Get content type
+	 *
+	 * @return Content type
+	 */
+	public String getContentType() {
+		return contentType;
+	}
 
-  /**
-   * Get charset
-   *
-   * @return Charset
-   */
-  public String getCharset() {
-    return charset;
-  }
+	/**
+	 * Get charset
+	 *
+	 * @return Charset
+	 */
+	public String getCharset() {
+		return charset;
+	}
 
-  @Override
-  public String toString() {
-    return "HttpRequestBody{" +
-        "content='" + content + '\'' +
-        ", charset='" + charset + '\'' +
-        ", contentType='" + contentType + '\'' +
-        '}';
-  }
+	@Override
+	public String toString() {
+		return "HttpRequestBody{" + "content='" + content + '\'' + ", charset='" + charset + '\'' + ", contentType='"
+				+ contentType + '\'' + '}';
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof HttpRequestBody)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof HttpRequestBody))
+			return false;
 
-    HttpRequestBody that = (HttpRequestBody) o;
+		HttpRequestBody that = (HttpRequestBody) o;
 
-    if (content != null ? !content.equals(that.content) : that.content != null) return false;
-    if (charset != null ? !charset.equals(that.charset) : that.charset != null) return false;
-    return contentType != null ? contentType.equals(that.contentType) : that.contentType == null;
+		if (content != null ? !content.equals(that.content) : that.content != null)
+			return false;
+		if (charset != null ? !charset.equals(that.charset) : that.charset != null)
+			return false;
+		return contentType != null ? contentType.equals(that.contentType) : that.contentType == null;
 
-  }
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+		result = prime * result + ((content == null) ? 0 : content.hashCode());
+		result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+		return result;
+	}
 
 }

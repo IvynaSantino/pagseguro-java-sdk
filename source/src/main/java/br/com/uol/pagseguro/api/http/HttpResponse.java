@@ -39,108 +39,121 @@ import br.com.uol.pagseguro.api.utils.XMLUtils;
  */
 public class HttpResponse {
 
-  private final String responseAsString;
+	private final String responseAsString;
 
-  private final int status;
+	private final int status;
 
-  /**
-   * Constructor
-   *
-   * @param status           Status
-   * @param responseAsString Response as string
-   */
-  public HttpResponse(int status, String responseAsString) {
-    this.status = status;
-    this.responseAsString = responseAsString;
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param status
+	 *            Status
+	 * @param responseAsString
+	 *            Response as string
+	 */
+	public HttpResponse(int status, String responseAsString) {
+		this.status = status;
+		this.responseAsString = responseAsString;
+	}
 
-  /**
-   * Get status
-   *
-   * @return Status
-   */
-  public int getStatus() {
-    return status;
-  }
+	/**
+	 * Get status
+	 *
+	 * @return Status
+	 */
+	public int getStatus() {
+		return status;
+	}
 
-  /**
-   * Get status family
-   *
-   * @return Status family
-   */
-  public HttpStatusFamily getStatusFamily() {
-    return HttpStatusFamily.fromStatus(status);
-  }
+	/**
+	 * Get status family
+	 *
+	 * @return Status family
+	 */
+	public HttpStatusFamily getStatusFamily() {
+		return HttpStatusFamily.fromStatus(status);
+	}
 
-  /**
-   * Get response as string
-   *
-   * @return Response as string
-   */
-  public String asString() {
-    return responseAsString;
-  }
+	/**
+	 * Get response as string
+	 *
+	 * @return Response as string
+	 */
+	public String asString() {
+		return responseAsString;
+	}
 
-  /**
-   * Parse xml content
-   *
-   * @param pagSeguro   Pagseguro instance
-   * @param targetClazz Class to be converted
-   * @param <T>         Class converted
-   * @return Response converted
-   */
-  public <T> T parseXMLContent(PagSeguro pagSeguro, Class<T> targetClazz) {
-    switch (getStatusFamily()) {
-      case SUCCESSFUL:
-        try {
-          return XMLUtils.unmarshal(pagSeguro, targetClazz, asString());
-        } catch (JAXBException e) {
-          throw new PagSeguroLibException(e);
-        }
-      case CLIENT_ERROR:
-        switch (getStatus()) {
-          case 400:
-            try {
-              throw new PagSeguroBadRequestException(this, XMLUtils.unmarshal(pagSeguro,
-                  ServerErrorsXML.class, asString()));
-            } catch (JAXBException e) {
-              throw new PagSeguroLibException(e);
-            }
-          case 401:
-            throw new PagSeguroUnauthorizedException(this);
-          case 403:
-            throw new PagSeguroForbiddenException(this);
-        }
-      case SERVER_ERROR:
-        switch (getStatus()) {
-          case 503:
-            throw new PagSeguroServiceUnavailableException(this);
-        }
-      default:
-        throw new PagSeguroInternalServerException(this);
-    }
+	/**
+	 * Parse xml content
+	 *
+	 * @param pagSeguro
+	 *            Pagseguro instance
+	 * @param targetClazz
+	 *            Class to be converted
+	 * @param <T>
+	 *            Class converted
+	 * @return Response converted
+	 */
+	public <T> T parseXMLContent(PagSeguro pagSeguro, Class<T> targetClazz) {
+		switch (getStatusFamily()) {
+		case SUCCESSFUL:
+			try {
+				return XMLUtils.unmarshal(pagSeguro, targetClazz, asString());
+			} catch (JAXBException e) {
+				throw new PagSeguroLibException(e);
+			}
+		case CLIENT_ERROR:
+			switch (getStatus()) {
+			case 400:
+				try {
+					throw new PagSeguroBadRequestException(this,
+							XMLUtils.unmarshal(pagSeguro, ServerErrorsXML.class, asString()));
+				} catch (JAXBException e) {
+					throw new PagSeguroLibException(e);
+				}
+			case 401:
+				throw new PagSeguroUnauthorizedException(this);
+			case 403:
+				throw new PagSeguroForbiddenException(this);
+			}
+		case SERVER_ERROR:
+			switch (getStatus()) {
+			case 503:
+				throw new PagSeguroServiceUnavailableException(this);
+			}
+		default:
+			throw new PagSeguroInternalServerException(this);
+		}
 
-  }
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof HttpResponse)) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof HttpResponse))
+			return false;
 
-    HttpResponse response = (HttpResponse) o;
+		HttpResponse response = (HttpResponse) o;
 
-    if (status != response.status) return false;
-    return responseAsString != null
-           ? responseAsString.equals(response.responseAsString)
-           : response.responseAsString == null;
+		if (status != response.status)
+			return false;
+		return responseAsString != null ? responseAsString.equals(response.responseAsString)
+				: response.responseAsString == null;
 
-  }
+	}
 
-  @Override
-  public String toString() {
-    return "HttpResponse{" +
-        "responseAsString='" + responseAsString + '\'' +
-        ", status=" + status +
-        '}';
-  }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((responseAsString == null) ? 0 : responseAsString.hashCode());
+		result = prime * result + status;
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "HttpResponse{" + "responseAsString='" + responseAsString + '\'' + ", status=" + status + '}';
+	}
 }
