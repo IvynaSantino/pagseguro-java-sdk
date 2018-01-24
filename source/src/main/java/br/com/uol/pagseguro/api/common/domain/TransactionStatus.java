@@ -121,7 +121,7 @@ public class TransactionStatus {
      */
     public static Status fromStatusId(Integer statusId) {
       for (Status status : Status.values()) {
-        if (status.statusId != null && status.statusId == statusId) {
+        if (status.statusId != null && status.statusId.equals(statusId)) {
           return status;
         }
       }
