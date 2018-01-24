@@ -23,66 +23,78 @@ package br.com.uol.pagseguro.api.credential;
 import br.com.uol.pagseguro.api.utils.RequestMap;
 
 /**
- * The PagSeguro applications model allows your application to create checkouts, receive payment
- * notifications and other functions on behalf of the client without the need to configure tokens,
- * return URL and other information in your account PagSeguro.
+ * The PagSeguro applications model allows your application to create checkouts,
+ * receive payment notifications and other functions on behalf of the client
+ * without the need to configure tokens, return URL and other information in
+ * your account PagSeguro.
  *
  * @author PagSeguro Internet Ltda.
  * @see Credential
  */
 public class ApplicationCredential extends Credential {
 
-  private String appId;
-  private String appKey;
+	private String appId;
+	private String appKey;
 
-  /**
-   * Constructor
-   *
-   * @param appId  The application id
-   * @param appKey Specifies the corresponding token to PagSeguro application that is making the
-   *               request.
-   */
-  ApplicationCredential(String appId, String appKey) {
-    if (appId == null || appKey == null) {
-      throw new NullPointerException();
-    }
-    this.appId = appId;
-    this.appKey = appKey;
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param appId
+	 *            The application id
+	 * @param appKey
+	 *            Specifies the corresponding token to PagSeguro application that is
+	 *            making the request.
+	 */
+	ApplicationCredential(String appId, String appKey) {
+		if (appId == null || appKey == null) {
+			throw new NullPointerException();
+		}
+		this.appId = appId;
+		this.appKey = appKey;
+	}
 
-  /**
-   * Convert attributes of credential to request map
-   *
-   * @return Request map. Used to set parameters of api
-   * @see RequestMap
-   * @see Credential#asMap()
-   */
-  @Override
-  public RequestMap asMap() {
-    final RequestMap form = new RequestMap();
-    form.putString("appId", appId);
-    form.putString("appKey", appKey);
-    return form;
-  }
+	/**
+	 * Convert attributes of credential to request map
+	 *
+	 * @return Request map. Used to set parameters of api
+	 * @see RequestMap
+	 * @see Credential#asMap()
+	 */
+	@Override
+	public RequestMap asMap() {
+		final RequestMap form = new RequestMap();
+		form.putString("appId", appId);
+		form.putString("appKey", appKey);
+		return form;
+	}
 
-  @Override
-  public String toString() {
-    return "ApplicationCredential{" +
-           "appId='" + appId + '\'' +
-           ", appKey='" + appKey + '\'' +
-           '}';
-  }
+	@Override
+	public String toString() {
+		return "ApplicationCredential{" + "appId='" + appId + '\'' + ", appKey='" + appKey + '\'' + '}';
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof ApplicationCredential)) return false;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((appId == null) ? 0 : appId.hashCode());
+		result = prime * result + ((appKey == null) ? 0 : appKey.hashCode());
+		return result;
+	}
 
-    ApplicationCredential that = (ApplicationCredential) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof ApplicationCredential))
+			return false;
 
-    if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
-    return appKey != null ? appKey.equals(that.appKey) : that.appKey == null;
+		ApplicationCredential that = (ApplicationCredential) o;
 
-  }
+		if (appId != null ? !appId.equals(that.appId) : that.appId != null)
+			return false;
+		return appKey != null ? appKey.equals(that.appKey) : that.appKey == null;
+
+	}
 
 }

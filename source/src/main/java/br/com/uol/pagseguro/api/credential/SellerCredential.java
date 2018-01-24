@@ -23,66 +23,77 @@ package br.com.uol.pagseguro.api.credential;
 import br.com.uol.pagseguro.api.utils.RequestMap;
 
 /**
- * Seller credential.
- * The seller uses this credential.
+ * Seller credential. The seller uses this credential.
  *
- * If you are creating sales for your own store. then you should use this type of authentication.
+ * If you are creating sales for your own store. then you should use this type
+ * of authentication.
  *
  * @author PagSeguro Internet Ltda.
  * @see Credential
  */
 public class SellerCredential extends Credential {
 
-  private final String email;
+	private final String email;
 
-  private final String token;
+	private final String token;
 
-  /**
-   * Constructor
-   *
-   * @param email The email of seller
-   * @param token The token of seller
-   */
-  SellerCredential(String email, String token) {
-    if (email == null || token == null) {
-      throw new NullPointerException();
-    }
-    this.email = email;
-    this.token = token;
-  }
+	/**
+	 * Constructor
+	 *
+	 * @param email
+	 *            The email of seller
+	 * @param token
+	 *            The token of seller
+	 */
+	SellerCredential(String email, String token) {
+		if (email == null || token == null) {
+			throw new NullPointerException();
+		}
+		this.email = email;
+		this.token = token;
+	}
 
-  /**
-   * Convert attributes of credentials on a request map
-   *
-   * @return Request map
-   * @see RequestMap
-   */
-  @Override
-  public RequestMap asMap() {
-    final RequestMap form = new RequestMap();
-    form.putString("email", email);
-    form.putString("token", token);
-    return form;
-  }
+	/**
+	 * Convert attributes of credentials on a request map
+	 *
+	 * @return Request map
+	 * @see RequestMap
+	 */
+	@Override
+	public RequestMap asMap() {
+		final RequestMap form = new RequestMap();
+		form.putString("email", email);
+		form.putString("token", token);
+		return form;
+	}
 
-  @Override
-  public String toString() {
-    return "SellerCredential{" +
-           "email='" + email + '\'' +
-           ", token='" + token + '\'' +
-           '}';
-  }
+	@Override
+	public String toString() {
+		return "SellerCredential{" + "email='" + email + '\'' + ", token='" + token + '\'' + '}';
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof SellerCredential)) return false;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((token == null) ? 0 : token.hashCode());
+		return result;
+	}
 
-    SellerCredential that = (SellerCredential) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof SellerCredential))
+			return false;
 
-    if (email != null ? !email.equals(that.email) : that.email != null) return false;
-    return token != null ? token.equals(that.token) : that.token == null;
+		SellerCredential that = (SellerCredential) o;
 
-  }
+		if (email != null ? !email.equals(that.email) : that.email != null)
+			return false;
+		return token != null ? token.equals(that.token) : that.token == null;
+
+	}
 
 }

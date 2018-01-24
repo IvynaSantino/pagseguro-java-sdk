@@ -31,42 +31,51 @@ import br.com.uol.pagseguro.api.common.domain.Account;
  * @author PagSeguro Internet Ltda.
  */
 public class AccountXML implements Account {
-  private String publicKey;
+	private String publicKey;
 
-  /**
-   * Get public key
-   *
-   * @return Public Key of Account
-   */
-  public String getPublicKey() {
-    return publicKey;
-  }
+	/**
+	 * Get public key
+	 *
+	 * @return Public Key of Account
+	 */
+	public String getPublicKey() {
+		return publicKey;
+	}
 
-  /**
-   * Set public key
-   *
-   * @param publicKey Public Key of Account
-   */
-  @XmlElement
-  public void setPublicKey(String publicKey) {
-    this.publicKey = publicKey;
-  }
+	/**
+	 * Set public key
+	 *
+	 * @param publicKey
+	 *            Public Key of Account
+	 */
+	@XmlElement
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof AccountXML)) return false;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
+		return result;
+	}
 
-    AccountXML accountXML = (AccountXML) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof AccountXML))
+			return false;
 
-    return publicKey != null ? publicKey.equals(accountXML.publicKey) : accountXML.publicKey == null;
+		AccountXML accountXML = (AccountXML) o;
 
-  }
+		return publicKey != null ? publicKey.equals(accountXML.publicKey) : accountXML.publicKey == null;
 
-  @Override
-  public String toString() {
-    return "Account{" +
-        "publicKey='" + publicKey + '\'' +
-        '}';
-  }
+	}
+
+	@Override
+	public String toString() {
+		return "Account{" + "publicKey='" + publicKey + '\'' + '}';
+	}
 }

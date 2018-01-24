@@ -34,92 +34,106 @@ import br.com.uol.pagseguro.api.common.domain.PermissionCode;
  */
 public class PermissionXML implements Permission {
 
-  private String codeId;
-  private String status;
-  private Date lastUpdate;
+	private String codeId;
+	private String status;
+	private Date lastUpdate;
 
-  /**
-   * Get code of permission
-   *
-   * @return Code
-   */
-  public String getCodeId() {
-    return codeId;
-  }
+	/**
+	 * Get code of permission
+	 *
+	 * @return Code
+	 */
+	public String getCodeId() {
+		return codeId;
+	}
 
-  /**
-   * Set code of permission
-   *
-   * @param code Code
-   */
-  @XmlElement(name = "code")
-  public void setCodeId(String codeId) {
-    this.codeId = codeId;
-  }
+	/**
+	 * Set code of permission
+	 *
+	 * @param code
+	 *            Code
+	 */
+	@XmlElement(name = "code")
+	public void setCodeId(String codeId) {
+		this.codeId = codeId;
+	}
 
-  @Override
-  public PermissionCode getCode() {
-    return new PermissionCode(getCodeId());
-  }
+	@Override
+	public PermissionCode getCode() {
+		return new PermissionCode(getCodeId());
+	}
 
-  /**
-   * Get status of permission
-   *
-   * @return Status
-   */
-  public String getStatus() {
-    return status;
-  }
+	/**
+	 * Get status of permission
+	 *
+	 * @return Status
+	 */
+	public String getStatus() {
+		return status;
+	}
 
-  /**
-   * Set status of permission
-   *
-   * @param status Status
-   */
-  @XmlElement
-  public void setStatus(String status) {
-    this.status = status;
-  }
+	/**
+	 * Set status of permission
+	 *
+	 * @param status
+	 *            Status
+	 */
+	@XmlElement
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-  /**
-   * Get last update of permission
-   *
-   * @return Last update permission
-   */
-  public Date getLastUpdate() {
-    return lastUpdate;
-  }
+	/**
+	 * Get last update of permission
+	 *
+	 * @return Last update permission
+	 */
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
 
-  /**
-   * Get last update of permission
-   *
-   * @param lastUpdate Last update
-   */
-  @XmlElement
-  public void setLastUpdate(Date lastUpdate) {
-    this.lastUpdate = lastUpdate;
-  }
+	/**
+	 * Get last update of permission
+	 *
+	 * @param lastUpdate
+	 *            Last update
+	 */
+	@XmlElement
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
 
-  @Override
-  public String toString() {
-    return "PermissionXML{" +
-           "codeId='" + codeId + '\'' +
-           ", status='" + status + '\'' +
-           ", lastUpdate=" + lastUpdate +
-           '}';
-  }
+	@Override
+	public String toString() {
+		return "PermissionXML{" + "codeId='" + codeId + '\'' + ", status='" + status + '\'' + ", lastUpdate="
+				+ lastUpdate + '}';
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof PermissionXML)) return false;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((codeId == null) ? 0 : codeId.hashCode());
+		result = prime * result + ((lastUpdate == null) ? 0 : lastUpdate.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		return result;
+	}
 
-    PermissionXML that = (PermissionXML) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof PermissionXML))
+			return false;
 
-    if (codeId != null ? !codeId.equals(that.codeId) : that.codeId != null) return false;
-    if (status != null ? !status.equals(that.status) : that.status != null) return false;
-    return lastUpdate != null ? lastUpdate.equals(that.lastUpdate) : that.lastUpdate == null;
+		PermissionXML that = (PermissionXML) o;
 
-  }
+		if (codeId != null ? !codeId.equals(that.codeId) : that.codeId != null)
+			return false;
+		if (status != null ? !status.equals(that.status) : that.status != null)
+			return false;
+		return lastUpdate != null ? lastUpdate.equals(that.lastUpdate) : that.lastUpdate == null;
+
+	}
 
 }
