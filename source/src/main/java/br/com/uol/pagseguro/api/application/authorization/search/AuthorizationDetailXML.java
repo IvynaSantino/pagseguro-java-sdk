@@ -119,8 +119,55 @@ public class AuthorizationDetailXML implements AuthorizationDetail {
 		result = prime * result + ((authorizerEmail == null) ? 0 : authorizerEmail.hashCode());
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
+		result = prime * result + ((permissions == null) ? 0 : permissions.hashCode());
 		result = prime * result + ((reference == null) ? 0 : reference.hashCode());
 		return result;
+	}
+
+
+	public boolean comparationCode(AuthorizationDetailXML that) {
+		if (code != null ? !code.equals(that.code) : that.code != null)
+			return false;
+		else {
+			return comparationAutorizerEmail(that);
+		}
+	}
+
+	public boolean comparationAutorizerEmail(AuthorizationDetailXML that) {
+		if (authorizerEmail != null ? !authorizerEmail.equals(that.authorizerEmail) : that.authorizerEmail != null)
+			return false;
+		else {
+			return comparationCreationDate(that);
+		}
+	}
+
+	public boolean comparationCreationDate(AuthorizationDetailXML that) {
+		if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null)
+			return false;
+		else {
+			return comparationReference(that);
+		}
+	}
+
+	public boolean comparationReference(AuthorizationDetailXML that) {
+		if (reference != null ? !reference.equals(that.reference) : that.reference != null)
+			return false;
+		else {
+			return comparationAccount(that);
+		}
+	}
+
+	public boolean comparationAccount(AuthorizationDetailXML that) {
+		if (account != null ? !account.equals(that.account) : that.account != null)
+			return false;
+		else {
+			return comparation(that);
+		}
+	}
+
+
+	public boolean comparation(AuthorizationDetailXML that) {
+		return permissions != null ? permissions.equals(that.permissions) : that.permissions == null;
 	}
 
 	@Override
@@ -129,21 +176,9 @@ public class AuthorizationDetailXML implements AuthorizationDetail {
 			return true;
 		if (!(o instanceof AuthorizationDetailXML))
 			return false;
-
 		AuthorizationDetailXML that = (AuthorizationDetailXML) o;
-
-		if (code != null ? !code.equals(that.code) : that.code != null)
-			return false;
-		if (authorizerEmail != null ? !authorizerEmail.equals(that.authorizerEmail) : that.authorizerEmail != null)
-			return false;
-		if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null)
-			return false;
-		if (reference != null ? !reference.equals(that.reference) : that.reference != null)
-			return false;
-		if (account != null ? !account.equals(that.account) : that.account != null)
-			return false;
-		return permissions != null ? permissions.equals(that.permissions) : that.permissions == null;
-
+		
+		return comparationCode(that);
 	}
 
 }
