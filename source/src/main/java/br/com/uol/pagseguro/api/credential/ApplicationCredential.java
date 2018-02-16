@@ -90,10 +90,17 @@ public class ApplicationCredential extends Credential {
 			return false;
 
 		ApplicationCredential that = (ApplicationCredential) o;
-
+		
 		if (appId != null ? !appId.equals(that.appId) : that.appId != null)
 			return false;
-		return appKey != null ? appKey.equals(that.appKey) : that.appKey == null;
+		
+		if (appKey != null) {
+			return appKey.equals(that.appKey);
+		} else {
+			return that.appKey == null;
+		}
+		
+		//return appKey != null ? appKey.equals(that.appKey) : that.appKey == null;
 
 	}
 

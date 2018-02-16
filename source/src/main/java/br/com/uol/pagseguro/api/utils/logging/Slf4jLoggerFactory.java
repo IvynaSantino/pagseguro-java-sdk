@@ -29,7 +29,9 @@ package br.com.uol.pagseguro.api.utils.logging;
 public class Slf4jLoggerFactory extends LoggerFactory {
 
   public Slf4jLoggerFactory() {
+	super();
     LoggerFactory.configureLoggerFactory(this);
+    
   }
 
   /**
