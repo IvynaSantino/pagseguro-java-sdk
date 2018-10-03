@@ -21,6 +21,7 @@ Requisitos Mínimos
 
  - [Java] 1.6+
  - [Gradle]
+ - [Maven]
 
 Instalação
 ----------
